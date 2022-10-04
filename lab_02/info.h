@@ -7,6 +7,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#define COMPOSER_NAME_LEN 30
+#define COUNTRY_LEN 30
+#define THEATRE_NAME_LEN 30
+#define PERFORMANCE_LEN 30
 #define STR_LEN 30
 #define TYPE_LEN 30
 
@@ -27,8 +31,8 @@ typedef struct
 
 typedef struct
 {
-    char composer[STR_LEN + 1];
-    char country[STR_LEN + 1];
+    char composer[COMPOSER_NAME_LEN + 1];
+    char country[COUNTRY_LEN + 1];
     int min_age;
     int duration;
 } music_t;
@@ -42,12 +46,12 @@ typedef union
 
 typedef struct
 {
-    char name_theatre[STR_LEN + 1];
-    char performance[STR_LEN + 1];
-    char composer[STR_LEN + 1];
+    char name_theatre[THEATRE_NAME_LEN + 1];
+    char performance[PERFORMANCE_LEN + 1];
+    char composer[COMPOSER_NAME_LEN + 1];
     int min_price;
     int max_price;
-    char str_type_of_perfomance[STR_LEN + 1];
+    char str_type_of_perfomance[TYPE_LEN + 1];
     type_of_perfomance_t type_of_performance;
 } theatres_t;
 
@@ -62,6 +66,6 @@ typedef struct
     theatres_t theatres[STR_LEN];
     keys_t keys[STR_LEN];
     int size;
-}
+} table_t;
 
-#endif //#ifndef __INFO_H__
+#endif // __INFO_H__

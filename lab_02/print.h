@@ -3,4 +3,4 @@
 
 void print_menu(void);
 
-#endif //#ifndef __PRINT_H__
+#endif // __PRINT_H__

@@ -9,4 +9,5 @@
 #define MENU_ERROR 3
 #define SCAN_ERROR 4
 
-#endif // #ifndef __ERRORS_H__
+
+#endif // __ERRORS_H__
