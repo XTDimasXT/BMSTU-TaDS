@@ -260,7 +260,11 @@ int fill_theatre_repertoire(FILE *f, theatres_t *theatre)
     }
     
     temp = read_prices(f, &(*theatre).min_price, &(*theatre).max_price);
+    if (temp)
+        return temp;
     temp = read_type_of_performance(f, (*theatre).str_type_of_performance, &(*theatre).type_of_performance);
+    if (temp)
+        return temp;
     return EXIT_SUCCESS;
 }
 

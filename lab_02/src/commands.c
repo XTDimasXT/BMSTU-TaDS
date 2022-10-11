@@ -45,7 +45,7 @@ int add_performance(table_t *table)
 
     printf("Введите репертуар театра по следующим правилам: \n"
            "- Название_театра Название_спектакля Фамилия_режиссера Мин_цена_билета Макс_цена_билета "
-           "- Тип_спектакля(child/adult/music)\n"
+           "Тип_спектакля(child/adult/music)\n"
            "- Если 'child': Мин_возраст Тип(tale/piece)\n"
            "- Если 'adult': Тип(piece, drama, comedy)\n"
            "- Если 'music': Композитор Страна Мин_возраст Продолжительность\n"
@@ -53,6 +53,8 @@ int add_performance(table_t *table)
     int temp = fill_theatre_repertoire(stdin, &((*table).theatres[(*table).size - 1]));
     if (temp)
         return temp;
+    create_array_of_keys(table);
+    printf("Добавление прошло успешно!\n");
     return EXIT_SUCCESS;
 }
 
@@ -77,7 +79,7 @@ int delete_lines(table_t *table)
     {
         if ((*table).theatres[i].min_price > min_price)
         {
-            for (int j = i + 1; j < (*table).size; j++)
+            for (int j = i + 1; j < (*table).size; j++) 
                 (*table).theatres[j - 1] = (*table).theatres[j];
             count++;
             (*table).size--;
@@ -85,6 +87,7 @@ int delete_lines(table_t *table)
         else
             i++;
     }
+    create_array_of_keys(table);
     printf("Количество удаленных спектаклей: %d\n", count);
     return EXIT_SUCCESS;
 }

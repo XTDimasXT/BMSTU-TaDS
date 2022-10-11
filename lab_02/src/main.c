@@ -25,7 +25,10 @@ int main(void)
         if (temp)
             return temp;
         if (option == 1)
+        {
             temp = fill_table(name_file, &table);
+            printf("Загрузка прошла успешно!\n");
+        }
         else if (option == 2)
             print_table(&table);
         else if (option == 3)
@@ -37,13 +40,25 @@ int main(void)
         else if (option == 6)
             print_keys(&table);
         else if (option == 7)
+        {
             sort_keys_qsort(&table);
+            printf("Сортировка прошла успешно!\n");
+        }
         else if (option == 8)
+        {
             sort_keys_choice(&table);
+            printf("Сортировка прошла успешно!\n");
+        }
         else if (option == 9)
+        {
             sort_qsort(&table);
+            printf("Сортировка прошла успешно!\n");
+        }
         else if (option == 10)
+        {
             sort_choice(&table);
+            printf("Сортировка прошла успешно!\n");
+        }
         else if (option == 11)
             sort_keys(&table);
         else if (option == 12)

@@ -8,17 +8,14 @@
 #define PRODUCER_NAME_LEN 14
 #define STR_LEN 20
 #define TYPE_LEN 20
-#define TABLE_SIZE 1000
-#define HZ 2300000000
+#define TABLE_SIZE 500
+#define HZ 230000
 #define RUNS_OF_PROGRAMM 1000
 #define MIN_AGE 0
 #define MAX_AGE 18
 #define MIN_DURATION 0
 #define MIN_COMMAND 0
 #define MAX_COMMAND 12
-
-#define COUNT_TYPE_CHILD 2
-#define COUNT_TYPE_ADULT 3
 
 
 typedef struct

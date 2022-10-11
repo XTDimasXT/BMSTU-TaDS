@@ -3,15 +3,16 @@
 #include <string.h>
 
 #include "../inc/sort.h"
+#include "../inc/commands.h"
 
-int compare_t(const theatres_t *arg1, const theatres_t *arg2)
+int compare_t(const theatres_t *arg_1, const theatres_t *arg_2)
 {
-    return (strcmp((*arg1).performance, (*arg2).performance));
+    return (strcmp((*arg_1).performance, (*arg_2).performance));
 }
 
-int compare_k(const keys_t *arg1, const keys_t *arg2)
+int compare_k(const keys_t *arg_1, const keys_t *arg_2)
 {
-    return (strcmp((*arg1).arr, (*arg2).arr));
+    return (strcmp((*arg_1).arr, (*arg_2).arr));
 }
 
 void sort_keys_qsort(table_t *table)
@@ -54,7 +55,7 @@ void sort_qsort(table_t *table)
         return;
     }
     qsort((*table).theatres, (*table).size, sizeof(theatres_t), (int(*) (const void *, const void *)) compare_t);
-
+    create_array_of_keys(table);
 }
 
 void sort_choice(table_t *table)
@@ -77,23 +78,24 @@ void sort_choice(table_t *table)
         (*table).theatres[i] = (*table).theatres[min];
         (*table).theatres[min] = temp;
     }
+    create_array_of_keys(table);
 }
 
 void sort_keys(table_t *table)
 {
-    char str1[] = "Theatre";
-    char str2[] = "Performance";
-    char str3[] = "Producer";
-    char str4[] = "Min_pr";
-    char str5[] = "Max_pr";
-    char str6[] = "Type";
-    char str7[] = "Age_ch";
-    char str8[] = "Type_ch";
-    char str9[] = "Type_ad";
-    char str10[] = "Composer";
-    char str11[] = "Country";
-    char str12[] = "Age_mus";
-    char str13[] = "Duration";
+    char str_1[] = "Theatre";
+    char str_2[] = "Performance";
+    char str_3[] = "Producer";
+    char str_4[] = "Min_pr";
+    char str_5[] = "Max_pr";
+    char str_6[] = "Type";
+    char str_7[] = "Age_ch";
+    char str_8[] = "Type_ch";
+    char str_9[] = "Type_ad";
+    char str_10[] = "Composer";
+    char str_11[] = "Country";
+    char str_12[] = "Age_mus";
+    char str_13[] = "Duration";
 
     if ((*table).size == 0)
     {
@@ -102,7 +104,7 @@ void sort_keys(table_t *table)
     }
     
     printf("| %-13s | %-13s | %-13s | %-6s | %-6s | %-6s | %-7s | %-8s | %-8s | %-13s | %-9s | %-8s | %-8s |\n",
-           str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11, str12, str13);
+           str_1, str_2, str_3, str_4, str_5, str_6, str_7, str_8, str_9, str_10, str_11, str_12, str_13);
     for (int i = 0; i < (*table).size; i++)
         print_line((*table).keys[i].index, (*table).theatres);
     printf("\n");

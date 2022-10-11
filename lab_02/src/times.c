@@ -22,7 +22,7 @@ int64_t tick(void)
 
 void print_result(int64_t start, int64_t end)
 {
-    printf("\n%ld тактов, %.10lf секунд\n", end - start, (double)(end - start)/HZ);
+    printf("%.3lf мс", (double)(end - start)/HZ);
 }
 
 int compare_sorts(const char name_file[], table_t *table)
@@ -33,9 +33,10 @@ int compare_sorts(const char name_file[], table_t *table)
     if (temp)
         return temp;
     
-    printf("===Сравнение методов сортировки===\n");
-    
-    printf("Сортировка методом qsort:");
+    printf("====Сравнение методов сортировки====\n");
+    printf("           |   qsort   |   choice  |\n");
+
+    printf("  Таблица  | ");
     for (int i = 0; i < RUNS_OF_PROGRAMM; i++)
     {
         start += tick();
@@ -43,9 +44,10 @@ int compare_sorts(const char name_file[], table_t *table)
         end += tick();
         temp = fill_table(name_file, table);
     }
-    print_result(start / RUNS_OF_PROGRAMM, end / RUNS_OF_PROGRAMM);
+    double a = (double)(end - start)/HZ;
+    print_result(start, end);
+    printf(" | ");
     
-    printf("Сортировка методом выбором:");
     start = 0;
     end = 0;
     for (int i = 0; i < RUNS_OF_PROGRAMM; i++)
@@ -55,9 +57,14 @@ int compare_sorts(const char name_file[], table_t *table)
         end += tick();
         temp = fill_table(name_file, table);
     }
-    print_result(start / RUNS_OF_PROGRAMM, end / RUNS_OF_PROGRAMM);
+    double b = (double)(end - start)/HZ;
+    print_result(start, end);
 
-    printf("Сортировка массива ключей методом qsort:");
+    double diff1 = (double)(b / a);
+    double diff1_perc = (diff1 - 1) * 100;
+    printf(" |\n");
+    printf("   Ключи   | ");
+
     start = 0;
     end = 0;
     for (int i = 0; i < RUNS_OF_PROGRAMM; i++)
@@ -67,9 +74,10 @@ int compare_sorts(const char name_file[], table_t *table)
         end += tick();
         temp = fill_table(name_file, table);
     }
-    print_result(start / RUNS_OF_PROGRAMM, end / RUNS_OF_PROGRAMM);
+    double c = (double)(end - start)/HZ;
+    print_result(start, end);
+    printf(" | ");
 
-    printf("Сортировка массива ключей методом выбором:");
     start = 0;
     end = 0;
     for (int i = 0; i < RUNS_OF_PROGRAMM; i++)
@@ -79,9 +87,17 @@ int compare_sorts(const char name_file[], table_t *table)
         end += tick();
         temp = fill_table(name_file, table);
     }
-    print_result(start / RUNS_OF_PROGRAMM, end / RUNS_OF_PROGRAMM);
+    double d = (double)(end - start)/HZ;
+    print_result(start, end);
+    double diff2 = (double)(d / c);
+    double diff2_perc = (diff2 - 1) * 100;
+    printf(" |\n");
 
-    printf("\nПамять для хранения таблицы - %lu\n", (*table).size * sizeof(*(*table).theatres));
-    printf("Память для хранения массива ключей - %lu\n", (*table).size * sizeof(*(*table).keys));
+    printf("\nСортировка таблицы методом qsort быстрее методом сортировки выбором в %.3lf раз(а)\n", diff1);
+    printf("Сортировка таблицы методом qsort быстрее методом сортировки выбором на %.3lf %%\n", diff1_perc);
+    printf("Сортировка таблицы ключей методом qsort быстрее методом сортировки выбором в %.3lf раз(а)\n", diff2);
+    printf("Сортировка таблицы ключей методом qsort быстрее методом сортировки выбором на %.3lf %%\n", diff2_perc);
+    printf("\nПамять для хранения таблицы - %lu байт\n", (*table).size * sizeof(*(*table).theatres));
+    printf("Память для хранения массива ключей - %lu байт\n", (*table).size * sizeof(*(*table).keys));
     return EXIT_SUCCESS;
 }
