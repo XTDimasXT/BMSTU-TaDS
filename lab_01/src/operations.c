@@ -7,7 +7,7 @@
 #include "../inc/constants.h"
 #include "../inc/errors.h"
 
-int normalize(float_t *a)
+void normalize(float_t *a)
 {
     int deletion_order = 0;
     for (int i = 0; i < MANTISSA_LEN; i++)
@@ -27,8 +27,6 @@ int normalize(float_t *a)
     }
 
     a->order -= deletion_order;
-    
-    return EXIT_SUCCESS;
 }
 
 int pre_division(int a_digits[], int b_digits[], int a_signif, int b_signif)
@@ -42,7 +40,6 @@ int pre_division(int a_digits[], int b_digits[], int a_signif, int b_signif)
     {
         for (int i = 1; (i < b_signif + 1) && flag; i++)
         {
-            //printf("%d ", a_signif-i);
             if (a[a_signif - i] >= b_digits[b_signif - i])
                 a[a_signif - i] -= b_digits[b_signif - i];
             else
@@ -85,7 +82,6 @@ void division(float_t *a, integer_t b, int b_signif, float_t *res)
         cur_res = pre_division(&(a->mantissa[beg]), b.digits, end - beg + 1, b_signif);
         if (cur_res < 0 || cur_res > 9)
             cur_res = 0;
-        printf("%d ", cur_res);
         res->mantissa[cur] = cur_res;
         if ((a->mantissa[beg]) == 0)
             beg++;
@@ -123,17 +119,22 @@ void print_res(float_t a)
 {
     printf("%c", a.sign);
     printf("0.");
-    for (int i = MANTISSA_LEN - 1; i >= 0; i--)
-        if (a.mantissa[i])
-        {
-            for (int j = 0; j <= i; j++)
-                printf("%d", a.mantissa[j]);
-            i = -1;
-        }
-    printf("E");
-    if (a.order > 0)
-        printf("+");
-    printf("%d\n", a.order);
+    if (a.order == -60 || a.order == -61)
+        printf("0E0\n");
+    else
+    {
+        for (int i = MANTISSA_LEN - 1; i >= 0; i--)
+            if (a.mantissa[i])
+            {
+                for (int j = 0; j <= i; j++)
+                    printf("%d", a.mantissa[j]);
+                i = -1;
+            }
+        printf("E");
+        if (a.order > 0)
+            printf("+");
+        printf("%d\n", a.order);
+    }
 }
 
 void print_integer(integer_t b, int int_len)

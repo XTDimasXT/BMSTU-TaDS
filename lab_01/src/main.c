@@ -24,25 +24,19 @@ int main(void)
     printf("\n");
     if (rc != EXIT_SUCCESS)
         return rc;
-    rc = normalize(&a);
-    print_res(a);
-    if (rc != EXIT_SUCCESS)
-        return rc;
+    normalize(&a);
     
     int len = 0;
     printf("Введите целое число (делитель):\n");
     printf("Примеры ввода: +5351 или -125124\n");
     rc = my_integer_input(&b, &len);
-
     printf("\n");
     if (rc != EXIT_SUCCESS)
         return rc;
 
     division(&a, b, len, &res);
     round_res(&res);
-    rc = normalize(&res);
-    if (rc != EXIT_SUCCESS)
-        return rc;
+    normalize(&res);
     if (res.order < MIN_ORDER)
     {
         printf("Результат порядка меньше критического\n");

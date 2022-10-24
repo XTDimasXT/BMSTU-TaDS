@@ -98,10 +98,10 @@ int my_float_input(float_t *a)
         getchar();
     }
 
-    if (i == 0)
+    if (i == 0 && a->order != 0)
     {
-        printf("Нет значащих цифр");
-        return SIGNIF_ERROR;
+        printf("Если хотите ввести ноль - вводите его c нулевым порядком\n");
+        return ZERO_ERROR;
     }
     a->order += addition_order;
 

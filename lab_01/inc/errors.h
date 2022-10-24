@@ -8,7 +8,7 @@
 #define INPUT_DIGIT_ERROR 5
 #define TYPE_ERROR 6
 #define ORDER_ERROR 7
-#define SIGNIF_ERROR 8
-#define DIVISION_BY_ZERO 9
+#define DIVISION_BY_ZERO 8
+#define ZERO_ERROR 9
 
 #endif // __ERRORS_H__
