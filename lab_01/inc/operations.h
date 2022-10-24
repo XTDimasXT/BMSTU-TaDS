@@ -4,7 +4,7 @@
 int normalize(float_t *a);
 int pre_division(int a_res[], int b[], int a_len, int b_len);
 void division(float_t *a, integer_t b, int b_len, float_t *res);
-int round_res(float_t *a);
+void round_res(float_t *a);
 void print_res(float_t a);
 void print_integer(integer_t b, int int_len);
 

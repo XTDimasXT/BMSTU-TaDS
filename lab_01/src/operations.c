@@ -42,6 +42,7 @@ int pre_division(int a_digits[], int b_digits[], int a_signif, int b_signif)
     {
         for (int i = 1; (i < b_signif + 1) && flag; i++)
         {
+            //printf("%d ", a_signif-i);
             if (a[a_signif - i] >= b_digits[b_signif - i])
                 a[a_signif - i] -= b_digits[b_signif - i];
             else
@@ -82,13 +83,16 @@ void division(float_t *a, integer_t b, int b_signif, float_t *res)
     for (beg = 0, end = 0, cur = 0; end < MANTISSA_LEN; end++, cur++)
     {
         cur_res = pre_division(&(a->mantissa[beg]), b.digits, end - beg + 1, b_signif);
+        if (cur_res < 0 || cur_res > 9)
+            cur_res = 0;
+        printf("%d ", cur_res);
         res->mantissa[cur] = cur_res;
         if ((a->mantissa[beg]) == 0)
             beg++;
     }
 }
 
-int round_res(float_t *a)
+void round_res(float_t *a)
 {
     if ((a->mantissa[MANTISSA_LEN]) >= 5)
     {
@@ -112,28 +116,14 @@ int round_res(float_t *a)
             a->order++;
         }
     }
-    if (a->order < MIN_ORDER)
-    {
-        printf("Порядок результата меньше критического значения\n");
-        return ORDER_ERROR;
-    }
-    /*
-    else if (a->order > MAX_ORDER)
-    {
-        printf("Порядок результата больше критического значения\n");
-        return ORDER_ERROR;
-    }
-    */
     a->mantissa[MANTISSA_LEN] = 0;
-
-    return EXIT_SUCCESS;
 }
 
 void print_res(float_t a)
 {
     printf("%c", a.sign);
     printf("0.");
-    for (int i = MANTISSA_LEN - 1; i > 1; i--)
+    for (int i = MANTISSA_LEN - 1; i >= 0; i--)
         if (a.mantissa[i])
         {
             for (int j = 0; j <= i; j++)
