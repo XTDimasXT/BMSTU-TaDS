@@ -150,3 +150,107 @@ int read_nonzero_elems(matrix_t *matrix)
     
     return EXIT_SUCCESS;
 }
+
+int read_mode_input_sparse_matrix(int *mode, int *perc)
+{
+    print_menu_mode_input_sparse_matrix();
+
+    if (scanf("%d", mode) != 1)
+    {
+        printf("Способ ввода - целое число\n");
+        return SCAN_MODE_ERROR;
+    }
+    if (*mode <= 0 || *mode > 2)
+    {
+        printf("Способ ввода - число от 1 до 2\n");
+        return MODE_ERROR;
+    }
+
+    if (*mode == 2)
+    {
+        printf("Введите процент заполнения матрицы ненулевыми элементами:\n");
+        if (scanf("%d", perc) != 1)
+        {
+            printf("Процент заполнения - целое число\n");
+            return SCAN_PERC_ERROR;
+        }
+        if (*perc <= 0 || *perc > 100)
+        {
+            printf("Процент заполнения - целое число от 1 до 100\n");
+            return PERC_ERROR;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int read_sparse_matrix(sparse_matrix_t *sparse_matrix)
+{
+    int nonzero_elems;
+    int max_elems = sparse_matrix->rows * sparse_matrix->cols;
+
+    printf("Введите количество ненулевых элементов (от 1 до %d):\n", max_elems);
+    if (scanf("%d", &nonzero_elems) != 1)
+    {
+        printf("Число ненулевых элементов - целое число\n");
+        return SCAN_NONZERO_ELEMS_ERROR;
+    }
+    if (nonzero_elems <= 0 || nonzero_elems > max_elems)
+    {
+        printf("Количество ненулевых элементов - число от 1 до %d\n", max_elems);
+        return NONZERO_ELEMS_ERROR;
+    }
+
+    printf("Матрица размером %d на %d, кол-во ненулевых элементов - %d\n", sparse_matrix->rows, sparse_matrix->cols, nonzero_elems);
+    printf("Введите три параметра (кол-во элементов в строке, номер столбца, значение)\n");
+    printf("Вводить нужно через пробел или с новой строки\n");
+
+    int elem;
+    int elems_in_row;
+    int col_num;
+    int count = 0;
+    for (int i = 0; i < sparse_matrix->nonzero_elems; i++)
+    {
+        if (scanf("%d", &elems_in_row) != 1)
+        {
+            printf("Количество элементов в строке - целое число\n");
+            return SCAN_ELEMS_IN_ROW_ERROR;
+        }
+        if (elems_in_row < 0 || elems_in_row > sparse_matrix->cols)
+        {
+            printf("Количество элементов в строке - число от 0 до %d\n", sparse_matrix->cols);
+            return ELEMS_IN_ROW_ERROR;
+        }
+        if (scanf("%d", &col_num) != 1)
+        {
+            printf("Номер столбца - целое число\n");
+            return SCAN_COL_ERROR;
+        }
+        if (col_num < 0 || col_num > sparse_matrix->cols - 1)
+        {
+            printf("Номер столбца - число от 0 до %d\n", sparse_matrix->rows - 1);
+            return COL_ERROR;
+        }
+        if (scanf("%d", &elem) != 1)
+        {
+            printf("Элемент матрицы - целое число\n");
+            return SCAN_ELEM_ERROR;
+        }
+        if (elem == 0)
+        {
+            printf("Ненулевой элемент должен быть не равен 0");
+            return ZERO_ELEM_ERROR;
+        }
+        
+        sparse_matrix->a[i] = elems_in_row;
+        for (int j = 0; j < elems_in_row; j++)
+        {
+            sparse_matrix->ja[count] = col_num;
+            sparse_matrix->ia[count] = elem;
+            count++;
+        }
+    }
+    
+    return EXIT_SUCCESS;
+}
+

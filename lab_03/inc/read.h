@@ -13,5 +13,7 @@ int read_num_rows_and_columns(int *rows, int *cols);
 int read_mode_input_common_matrix(int *mode, int *perc);
 int read_full_matrix(matrix_t *matrix);
 int read_nonzero_elems(matrix_t *matrix);
+int read_mode_input_sparse_matrix(int *mode, int *perc);
+int read_sparse_matrix(sparse_matrix_t *sparse_matrix);
 
 #endif // __READ_H__

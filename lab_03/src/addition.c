@@ -147,5 +147,158 @@ int addition_common_matrix(void)
 
 int addition_sparse_matrix(void)
 {
+    printf("\nОбработка матрицы A\n\n");
+    sparse_matrix_t sparse_matrix_a;
+    int rc = read_num_rows_and_columns(&sparse_matrix_a.rows, &sparse_matrix_a.cols);
+    if (rc != EXIT_SUCCESS)
+        return rc;
+    
+    int mode;
+    int perc;
+    rc = read_mode_input_sparse_matrix(&mode, &perc);
+    if (rc != EXIT_SUCCESS)
+        return rc;
+    
+    if (mode == 1)
+    {
+        rc = create_sparse_matrix(&sparse_matrix_a);
+        if (rc != EXIT_SUCCESS)
+            return rc;
+        rc = read_sparse_matrix(&sparse_matrix_a);
+        if (rc != EXIT_SUCCESS)
+            return rc;
+    }
+
+    else if (mode == 2)
+    {
+        rc = create_sparse_matrix(&sparse_matrix_a);
+        if (rc != EXIT_SUCCESS)
+            return rc;
+        rc = random_sparse_matrix(&sparse_matrix_a, perc);
+        if (rc != EXIT_SUCCESS)
+            return rc;
+    }
+
+    printf("\nОбработка матрицы B\n\n");
+    sparse_matrix_t sparse_matrix_b;
+    rc = read_num_rows_and_columns(&sparse_matrix_b.rows, &sparse_matrix_b.cols);
+    if (rc != EXIT_SUCCESS)
+    {
+        free_sparse_matrix(&sparse_matrix_a);
+        return rc;
+    }
+    
+    if (sparse_matrix_a.rows != sparse_matrix_b.rows || sparse_matrix_a.cols != sparse_matrix_b.cols)
+    {
+        printf("В матрицах A и B разное количество строк/столбцов\n");
+        free_sparse_matrix(&sparse_matrix_a);
+        return DIFFERENT_SIZE_ERROR;
+    }
+    
+    rc = read_mode_input_sparse_matrix(&mode, &perc);
+    if (rc != EXIT_SUCCESS)
+    {
+        free_sparse_matrix(&sparse_matrix_a);
+        return rc;
+    }
+    
+    if (mode == 1)
+    {
+        rc = create_sparse_matrix(&sparse_matrix_b);
+        if (rc != EXIT_SUCCESS)
+        {
+            free_sparse_matrix(&sparse_matrix_a);
+            return rc;
+        }
+        rc = read_sparse_matrix(&sparse_matrix_b);
+        if (rc != EXIT_SUCCESS)
+        {
+            free_sparse_matrix(&sparse_matrix_a);
+            free_sparse_matrix(&sparse_matrix_b);
+            return rc;
+        }
+    }
+
+    else if (mode == 2)
+    {
+        rc = create_sparse_matrix(&sparse_matrix_b);
+        if (rc != EXIT_SUCCESS)
+        {
+            free_sparse_matrix(&sparse_matrix_a);
+            return rc;
+        }
+        rc = random_sparse_matrix(&sparse_matrix_b, perc);
+        if (rc != EXIT_SUCCESS)
+        {
+            free_sparse_matrix(&sparse_matrix_a);
+            return rc;
+        }
+    }
+
+    sparse_matrix_t sparse_matrix_res;
+    sparse_matrix_res.rows = sparse_matrix_a.rows;
+    sparse_matrix_res.cols = sparse_matrix_a.cols;
+
+    rc = create_sparse_matrix(&sparse_matrix_res);
+    if (rc != EXIT_SUCCESS)
+    {
+        free_sparse_matrix(&sparse_matrix_a);
+        free_sparse_matrix(&sparse_matrix_b);
+        return rc;
+    }
+
+    int count_a = 0;
+    int count_b = 0;
+    int count_res = 0;
+    for (int i = 0; i < sparse_matrix_a.rows; i++)
+    {
+        sparse_matrix_res.a[i] = sparse_matrix_a.a[i] + sparse_matrix_b.a[i];
+        if (sparse_matrix_a.a[i] != 0 && sparse_matrix_b.a[i] != 0)
+        {
+            int temp_count_a = count_a;
+            int temp_count_b = count_b;
+            while (count_a < temp_count_a + sparse_matrix_a.a[i])
+            {
+                while (count_b < temp_count_b + sparse_matrix_b.a[i])
+                {
+                    if (sparse_matrix_a.ja[count_a] == sparse_matrix_b.ja[count_b])
+                    {
+                        sparse_matrix_res.a[i]--;
+                        sparse_matrix_res.ja[count_res] = sparse_matrix_a.ja[count_a];
+                        sparse_matrix_res.ia[count_res] = sparse_matrix_a.ia[count_a] + sparse_matrix_b.ia[count_b];
+                        count_a++;
+                        count_b++;
+                        count_res++;
+                    }
+                    else if (sparse_matrix_a.ja[count_a] < sparse_matrix_b.ja[count_b])
+                    {
+                        sparse_matrix_res.ja[count_res] = sparse_matrix_a.ja[count_a];
+                        sparse_matrix_res.ia[count_res] = sparse_matrix_a.ja[count_a];
+                        count_a++;
+                        count_res++;
+                    }
+                    else if (sparse_matrix_a.ja[count_a] > sparse_matrix_b.ja[count_b])
+                    {
+                        sparse_matrix_res.ja[count_res] = sparse_matrix_b.ja[count_b];
+                        sparse_matrix_res.ia[count_res] = sparse_matrix_b.ja[count_b];
+                        count_b++;
+                        count_res++;
+                    }
+                }
+            }
+        }
+    }
+
+    printf("Матрица A:\n");
+    print_sparse_matrix(&sparse_matrix_a);
+    printf("Матрица B:\n");
+    print_sparse_matrix(&sparse_matrix_b);
+    printf("Результат сложения матриц A и B:\n");
+    print_sparse_matrix(&sparse_matrix_res);
+
+    free_sparse_matrix(&sparse_matrix_a);
+    free_sparse_matrix(&sparse_matrix_b);
+    free_sparse_matrix(&sparse_matrix_res);
+
     return EXIT_SUCCESS;
 }

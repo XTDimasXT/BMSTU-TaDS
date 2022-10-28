@@ -22,5 +22,5 @@ $(OBJS_DIR)/%.o : $(SRCS_DIR)/%.c $(HDRS_DIR) $(OBJS_DIR)
 build: app.exe
 
 clean:
-	$(RM) $(OBJS_DIR)/* *.exe
+	$(RM) $(OBJS_DIR)/* *.exe *.o
 	@rmdir $(OBJS_DIR)

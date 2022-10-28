@@ -11,7 +11,7 @@ void print_menu(void)
 
 void print_menu_mode_input_common_matrix(void)
 {
-    printf("Меню:\n");
+    printf("Выбор способа заполнения матрицы:\n");
     printf("1. Заполнение вручную ненулевых элементов\n");
     printf("2. Заполнение вручную всей матрицы\n");
     printf("3. Заполнение автоматически\n");
@@ -25,4 +25,26 @@ void print_common_matrix(matrix_t *matrix)
             printf("%-4d", matrix->matrix[i][j]);
         printf("\n");
     }
+}
+
+void print_menu_mode_input_sparse_matrix(void)
+{
+    printf("Выбор способа заполнения матрицы\n");
+    printf("1. Заполнение вручную\n");
+    printf("2. Заполнение автоматически\n");
+}
+
+void print_sparse_matrix(sparse_matrix_t *sparse_matrix)
+{
+    printf("Количество ненулевых элементов в строках:\n");
+    for (int i = 0; i < sparse_matrix->rows; i++)
+        printf("%d ", sparse_matrix->a[i]);
+    
+    printf("Номер столбца ненулевого элемента:\n");
+    for (int i = 0; i < sparse_matrix->nonzero_elems; i++)
+        printf("%d ", sparse_matrix->ja[i]);
+    
+    printf("Значение соответствующего элемента:\n");
+    for (int i = 0; i < sparse_matrix->nonzero_elems; i++)
+        printf("%d ", sparse_matrix->ia[i]);
 }

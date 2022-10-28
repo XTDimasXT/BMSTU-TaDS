@@ -22,7 +22,7 @@ int main(void)
             return rc;
         
         if (num_command == 1)
-            rc = 0;
+            rc = addition_sparse_matrix();
         else if (num_command == 2)
             rc = addition_common_matrix();
         else if (num_command == 3)
