@@ -6,7 +6,7 @@ SRCS := $(wildcard $(SRCS_DIR)/*.c)
 HDRS_DIR := ./inc
 HDRS := $(wildcard $(HDRS_DIR)/*.h)
 OBJS_DIR := ./out
-OBJS := $(OBJS_DIR)/addition.o $(OBJS_DIR)/dynamic_matrix.o $(OBJS_DIR)/main.o $(OBJS_DIR)/print.o $(OBJS_DIR)/random.o $(OBJS_DIR)/read.o
+OBJS := $(OBJS_DIR)/addition.o $(OBJS_DIR)/dynamic_matrix.o $(OBJS_DIR)/main.o $(OBJS_DIR)/print.o $(OBJS_DIR)/random.o $(OBJS_DIR)/read.o $(OBJS_DIR)/times.o
 
 .PHONY = build clean
 

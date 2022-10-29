@@ -6,6 +6,7 @@
 
 #include "struct.h"
 #include "errors.h"
+#include "dynamic_matrix.h"
 
 int random_common_matrix(matrix_t *matrix, int perc);
 int random_sparse_matrix(sparse_matrix_t *sparse_matrix, int perc);

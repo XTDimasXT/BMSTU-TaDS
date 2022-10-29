@@ -39,12 +39,15 @@ void print_sparse_matrix(sparse_matrix_t *sparse_matrix)
     printf("Количество ненулевых элементов в строках:\n");
     for (int i = 0; i < sparse_matrix->rows; i++)
         printf("%d ", sparse_matrix->a[i]);
+    printf("\n");
     
-    printf("Номер столбца ненулевого элемента:\n");
+    printf("Номера столбцов ненулевых элементов:\n");
     for (int i = 0; i < sparse_matrix->nonzero_elems; i++)
         printf("%d ", sparse_matrix->ja[i]);
+    printf("\n");
     
-    printf("Значение соответствующего элемента:\n");
+    printf("Значения соответствующих элементов:\n");
     for (int i = 0; i < sparse_matrix->nonzero_elems; i++)
         printf("%d ", sparse_matrix->ia[i]);
+    printf("\n");
 }

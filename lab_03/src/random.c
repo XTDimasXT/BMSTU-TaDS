@@ -31,8 +31,19 @@ int random_common_matrix(matrix_t *matrix, int perc)
 }
 
 int random_sparse_matrix(sparse_matrix_t *sparse_matrix, int perc)
-{
-    int count_elems = sparse_matrix->rows * sparse_matrix->cols;
+{   
+    matrix_t matrix;
+    matrix.rows = sparse_matrix->rows;
+    matrix.cols = sparse_matrix->cols;
+    matrix.matrix = allocate_matrix(matrix.rows, matrix.cols);
+    if (matrix.matrix == NULL)
+        return MALLOC_ERROR;
+    
+    for (int i = 0; i < matrix.rows; i++)
+        for (int j = 0; j < matrix.cols; j++)
+            matrix.matrix[i][j] = 0;
+    
+    int count_elems = matrix.rows * matrix.cols;
     int nonzero_elems = count_elems * perc / 100;
     if (nonzero_elems == 0)
     {
@@ -40,17 +51,37 @@ int random_sparse_matrix(sparse_matrix_t *sparse_matrix, int perc)
         return EMPTY_MATRIX_ERROR;
     }
 
-    int count = 0;
-    for (int i = 0; i < sparse_matrix->nonzero_elems; i++)
+    int rand1;
+    int rand2;
+    while (nonzero_elems != 0)
     {
-        sparse_matrix->a[i] = rand() % sparse_matrix->cols;
-        for (int j = 0; j < sparse_matrix->a[i]; j++)
+        rand1 = rand() % (matrix.rows);
+        rand2 = rand() % (matrix.cols);
+        if (matrix.matrix[rand1][rand2] == 0)
         {
-            sparse_matrix->ja[count] = rand() % sparse_matrix->cols;
-            sparse_matrix->ia[count] = rand();
-            count++;
+            matrix.matrix[rand1][rand2] = rand() % (matrix.rows) + 1;
+            nonzero_elems--;
         }
     }
+
+    int count = 0;
+    int nums_in_row;
+    for (int i = 0; i < matrix.rows; i++)
+    {
+        nums_in_row = 0;
+        for (int j = 0; j < matrix.cols; j++)
+        {
+            if (matrix.matrix[i][j] != 0)
+            {
+                sparse_matrix->ja[count] = j;
+                sparse_matrix->ia[count] = matrix.matrix[i][j];
+                count++;
+                nums_in_row++;
+            }
+        }
+        sparse_matrix->a[i] = nums_in_row;
+    }
+    free_matrix(matrix.matrix, matrix.rows);
 
     return EXIT_SUCCESS;
 }

@@ -5,6 +5,7 @@
 #include "../inc/random.h"
 #include "../inc/read.h"
 #include "../inc/struct.h"
+#include "../inc/times.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +27,7 @@ int main(void)
         else if (num_command == 2)
             rc = addition_common_matrix();
         else if (num_command == 3)
-            rc = 0;
+            rc = print_stats();
         else if (num_command == 0)
             break;
         

@@ -29,5 +29,6 @@
 #define VALUE_ERROR 26
 #define SCAN_ELEMS_IN_ROW_ERROR 27
 #define ELEMS_IN_ROW_ERROR 28
+#define MALLOC_ERROR 29
 
 #endif // __ERRORS_H__

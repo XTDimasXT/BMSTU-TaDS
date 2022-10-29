@@ -37,7 +37,7 @@ int create_common_matrix(matrix_t *matrix)
 
 int create_sparse_matrix(sparse_matrix_t *sparse_matrix)
 {
-    sparse_matrix->a = calloc(sparse_matrix->nonzero_elems * sizeof(int), sizeof(int));
+    sparse_matrix->a = calloc(sparse_matrix->rows * sizeof(int), sizeof(int));
     if (sparse_matrix->a == NULL)
     {
         printf("Ошибка выделения памяти под массив ненулевых элементов\n");
@@ -52,10 +52,10 @@ int create_sparse_matrix(sparse_matrix_t *sparse_matrix)
         return ALLOCATE_COLUMNS_ERROR;
     }
 
-    sparse_matrix->ia = calloc(sparse_matrix->rows * sizeof(int), sizeof(int));
+    sparse_matrix->ia = calloc(sparse_matrix->nonzero_elems * sizeof(int), sizeof(int));
     if (sparse_matrix->ia == NULL)
     {
-        printf("Ошибка выделения памяти под связный список\n");
+        printf("Ошибка выделения памяти под массив значений ненулевых элементов\n");
         free(sparse_matrix->a);
         free(sparse_matrix->ja);
         return ALLOCATE_LIST_ERROR;
