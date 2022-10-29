@@ -131,7 +131,7 @@ int test_time(int perc, int len)
     }
 
     unsigned long long beg_sparse = milliseconds_now();
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 50; i++)
         sparse_matrix_addition(&sparse_matrix_a, &sparse_matrix_b, &sparse_matrix_res);
     unsigned long long end_sparse = milliseconds_now();
     unsigned long long time_sparse = end_sparse - beg_sparse;
@@ -150,9 +150,9 @@ int test_time(int perc, int len)
 
 int print_stats(void)
 {
-    for (int i = 100; i < 1000; i += 50)
+    for (int i = 100; i < 1000; i += 100)
     {
-        for (int j = 10; j <= 100; j += 15)
+        for (int j = 10; j <= 100; j += 10)
         {
             int rc = test_time(j, i);
             if (rc != EXIT_SUCCESS)

@@ -1,6 +1,7 @@
 #include "../inc/addition.h"
 #include "../inc/dynamic_matrix.h"
 #include "../inc/errors.h"
+#include "../inc/operations.h"
 #include "../inc/print.h"
 #include "../inc/random.h"
 #include "../inc/read.h"

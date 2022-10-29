@@ -108,23 +108,13 @@ int read_nonzero_elems(matrix_t *matrix)
         return NONZERO_ELEMS_ERROR;
     }
 
-    printf("Введите три параметра (значение, cтроку, столбец) для каждого ненулевого элемента\n");
+    printf("Введите три параметра (номер строки, номер столбца, значение) для каждого ненулевого элемента\n");
     printf("Вводить нужно через пробел или с новой строки\n");
     int elem;
     int str_num;
     int col_num;
     for (int i = 0; i < nonzero_elems; i++)
     {
-        if (scanf("%d", &elem) != 1)
-        {
-            printf("Элемент матрицы - целое число\n");
-            return SCAN_ELEM_ERROR;
-        }
-        if (elem == 0)
-        {
-            printf("Ненулевой элемент должен быть не равен 0");
-            return ZERO_ELEM_ERROR;
-        }
         if (scanf("%d", &str_num) != 1)
         {
             printf("Номер строки - целое число\n");
@@ -144,6 +134,21 @@ int read_nonzero_elems(matrix_t *matrix)
         {
             printf("Номер столбца - число от 0 до %d\n", matrix->rows - 1);
             return COL_ERROR;
+        }
+        if (scanf("%d", &elem) != 1)
+        {
+            printf("Элемент матрицы - целое число\n");
+            return SCAN_ELEM_ERROR;
+        }
+        if (elem == 0)
+        {
+            printf("Ненулевой элемент должен быть не равен 0\n");
+            return ZERO_ELEM_ERROR;
+        }
+        if (matrix->matrix[str_num][col_num] != 0)
+        {
+            printf("Данный элемент уже был заполнен\n");
+            return REPEAT_FILL_ERROR;
         }
         matrix->matrix[str_num][col_num] = elem;
     }
@@ -190,6 +195,7 @@ int read_sparse_matrix(sparse_matrix_t *sparse_matrix)
     printf("Матрица размером %d на %d, кол-во ненулевых элементов - %d\n", sparse_matrix->rows, sparse_matrix->cols, sparse_matrix->nonzero_elems);
     printf("Введите три параметра (номер строки, номер столбца, значение)\n");
     printf("Вводить нужно через пробел или с новой строки\n");
+    printf("Для одной строки номера столбцов вводить строго в порядке возрастания\n");
 
     int elem;
     int row_num;
@@ -226,7 +232,7 @@ int read_sparse_matrix(sparse_matrix_t *sparse_matrix)
         }
         if (elem == 0)
         {
-            printf("Ненулевой элемент должен быть не равен 0");
+            printf("Ненулевой элемент должен быть не равен 0\n");
             return ZERO_ELEM_ERROR;
         }
         
@@ -235,6 +241,15 @@ int read_sparse_matrix(sparse_matrix_t *sparse_matrix)
         sparse_matrix->ia[count] = elem;
         count++;
     }
+
+    for (int i = 0; i < sparse_matrix->nonzero_elems; i++)
+        for (int j = 1; j < sparse_matrix->a[i]; j++)
+            for (int k = 0; k < sparse_matrix->a[i] - j; k++)
+                if (sparse_matrix->ja[j] == sparse_matrix->ja[k])
+                {
+                    printf("Для одной и той же строки были введены одинаковые номера столбцов\n");
+                    return REPEAT_FILL_ERROR;
+                }
     
     return EXIT_SUCCESS;
 }
@@ -255,17 +270,5 @@ int read_num_nonzero_elems(sparse_matrix_t *sparse_matrix)
         return NONZERO_ELEMS_ERROR;
     }
 
-    return EXIT_SUCCESS;
-}
-
-int find_num_nonzero_elems(sparse_matrix_t *sparse_matrix, int perc)
-{
-    int count_elems = sparse_matrix->rows * sparse_matrix->cols;
-    sparse_matrix->nonzero_elems = count_elems * perc / 100;
-    if (sparse_matrix->nonzero_elems == 0)
-    {
-        printf("При выбранном проценте все элементы будут нулевыми\n");
-        return EMPTY_MATRIX_ERROR;
-    }
     return EXIT_SUCCESS;
 }

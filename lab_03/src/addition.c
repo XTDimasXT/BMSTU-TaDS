@@ -129,12 +129,24 @@ int addition_common_matrix(void)
 
     common_matrix_addition(&matrix_a, &matrix_b, &matrix_res);
     
+    if (matrix_a.rows <= 10 && matrix_a.cols <= 10)
+    {
+        printf("\nПРЕДСТАВЛЕНИЕ В СТАНДАРТНОМ ВИДЕ:\n\n");
+        printf("Матрица A:\n");
+        print_common_matrix(&matrix_a);
+        printf("Матрица B:\n");
+        print_common_matrix(&matrix_b);
+        printf("Результат сложения матриц A и B:\n");
+        print_common_matrix(&matrix_res);
+    }
+
+    printf("\nПРЕДСТАВЛЕНИЕ В РАЗРЕЖЕННОМ ВИДЕ:\n\n");
     printf("Матрица A:\n");
-    print_common_matrix(&matrix_a);
+    convert_common_to_sparse(&matrix_a);
     printf("Матрица B:\n");
-    print_common_matrix(&matrix_b);
+    convert_common_to_sparse(&matrix_b);
     printf("Результат сложения матриц A и B:\n");
-    print_common_matrix(&matrix_res);
+    convert_common_to_sparse(&matrix_res);
 
     free_matrix(matrix_a.matrix, matrix_a.cols);
     free_matrix(matrix_b.matrix, matrix_b.cols);
@@ -196,6 +208,13 @@ int addition_sparse_matrix(void)
         free_sparse_matrix(&sparse_matrix_a);
         return rc;
     }
+
+    if (sparse_matrix_a.rows != sparse_matrix_b.rows || sparse_matrix_a.cols != sparse_matrix_b.cols)
+    {
+        printf("В матрицах A и B разное количество строк/столбцов\n");
+        free_sparse_matrix(&sparse_matrix_a);
+        return DIFFERENT_SIZE_ERROR;
+    } 
     
     rc = read_mode_input_sparse_matrix(&mode, &perc);
     if (rc != EXIT_SUCCESS)

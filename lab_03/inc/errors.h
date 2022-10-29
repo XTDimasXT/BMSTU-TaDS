@@ -30,5 +30,7 @@
 #define SCAN_ELEMS_IN_ROW_ERROR 27
 #define ELEMS_IN_ROW_ERROR 28
 #define MALLOC_ERROR 29
+#define CALLOC_ERROR 30
+#define REPEAT_FILL_ERROR 31
 
 #endif // __ERRORS_H__

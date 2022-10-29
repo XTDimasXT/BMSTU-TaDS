@@ -8,6 +8,7 @@
 #include "read.h"
 #include "dynamic_matrix.h"
 #include "random.h"
+#include "operations.h"
 
 int addition_common_matrix(void);
 int addition_sparse_matrix(void);
