@@ -4,6 +4,7 @@
 #include "../inc/print.h"
 #include "../inc/read.h"
 #include "../inc/structs.h"
+#include "../inc/times.h"
 
 int main(void)
 {
@@ -12,7 +13,7 @@ int main(void)
 
     while (1)
     {
-        print_choise();
+        print_choice();
         rc = read_method(&method);
         if (rc != EXIT_SUCCESS)
             return rc;
@@ -22,8 +23,7 @@ int main(void)
         else if (method == 2)
             rc = process_stack_as_array();
         else if (method == 3)
-            //rc = compare_time();
-            continue;
+            rc = compare_time();
         else if (method == 0)
             break;
         

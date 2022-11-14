@@ -1,7 +1,7 @@
 #ifndef __ERRORS_H__
 #define __ERRORS_H__
 
-#define STACK_SIZE 5000
+#define STACK_SIZE 500
 #define RANDOM_CONST 30
 
 #define SCAN_METHOD_ERROR 1

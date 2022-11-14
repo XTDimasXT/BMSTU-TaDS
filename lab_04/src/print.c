@@ -21,6 +21,12 @@ void print_menu_list(void)
     printf("0. Выход\n");
 }
 
+void print_menu_time(void)
+{
+    printf("1. Сравнение времени и памяти\n");
+    printf("0. Выход\n");
+}
+
 void print_choice(void)
 {
     printf("1. Заполнение стека с помощью списка\n");
@@ -48,7 +54,7 @@ void print_series_nums_array(stack_array_t *stack_array)
 
     int prev_elem;
     int flag;
-    while (stack_array->len > 1)
+    while (stack_array->len > 0)
     {
         flag = 0;
 
@@ -56,9 +62,9 @@ void print_series_nums_array(stack_array_t *stack_array)
         stack_array->p--;
         stack_array->len--;
 
-        while (*stack_array->p < prev_elem && stack_array->len > 0)
+        while (*stack_array->p > prev_elem && stack_array->len > 0)
         {
-            printf("%d", prev_elem);
+            printf("%d ", prev_elem);
             prev_elem = *stack_array->p;
             stack_array->p--;
             stack_array->len--;
@@ -72,7 +78,7 @@ void print_series_nums_array(stack_array_t *stack_array)
 
 void print_list(stack_list_t **stack_list)
 {
-    if (stack_list == NULL)
+    if (*stack_list == NULL)
     {
         printf("Размер стека - 0\n");
         return;
@@ -83,12 +89,44 @@ void print_list(stack_list_t **stack_list)
     stack_list_t *ptmp = *stack_list;
     while (ptmp != NULL)
     {
-        printf("%d %p\n", ptmp->elem, ptmp);
+        printf("%d ", ptmp->elem);
         ptmp = ptmp->next;
+    }
+    printf("\n");
+}
+
+void print_series_nums_list(stack_list_t *stack_list)
+{
+    if (stack_list == NULL)
+    {
+        printf("Стек пуст\n");
+        return;
+    }
+
+    int prev_elem;
+    int flag;
+    while (stack_list != NULL && stack_list->next != NULL)
+    {
+        flag = 0;
+        prev_elem = stack_list->elem;
+        stack_list = stack_list->next;
+
+        while (stack_list->elem > prev_elem && stack_list != NULL)
+        {
+            printf("%d ", prev_elem);
+            prev_elem = stack_list->elem;
+            stack_list = stack_list->next;
+            flag = 1;
+        }
+
+        if (flag == 1)
+            printf("%d\n", prev_elem);
     }
 }
 
-void print_series_nums_list(stack_list_t **stack_list)
+void print_addresses_array(arr_free_area_t *arr)
 {
-    
+    for (int i = 0; i < arr->len; i++)
+        printf("%p ", (void *)arr->arr[i]);
+    printf("\n");
 }

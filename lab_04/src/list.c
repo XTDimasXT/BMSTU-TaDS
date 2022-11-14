@@ -12,7 +12,7 @@ int process_stack_as_list(void)
     while (1)
     {
         print_menu_list();
-        rc = read_action(&action);
+        rc = read_action_list(&action);
         if (rc != EXIT_SUCCESS)
         {
             free_stack_list(&stack_list);
@@ -76,7 +76,7 @@ int process_stack_as_list(void)
         else if (action == 4)
             print_list(&stack_list);
         else if (action == 5)
-            print_series_nums_list(&stack_list);
+            print_series_nums_list(stack_list);
         else if (action == 6)
             print_addresses_array(&arr);
         else if (action == 0)
@@ -113,6 +113,7 @@ int add_elems_list(stack_list_t **stack_list, int num_elems)
 {
     stack_list_t *new_elem;
 
+    printf("Введите %d элементов(а):\n", num_elems);
     for (int i = 0; i < num_elems; i++)
     {
         new_elem = malloc(sizeof(stack_list_t));
@@ -122,7 +123,7 @@ int add_elems_list(stack_list_t **stack_list, int num_elems)
             return MALLOC_ERROR;
         }
 
-        if (scanf("%d", new_elem->elem) != 1)
+        if (scanf("%d", &new_elem->elem) != 1)
         {
             printf("Ошибка в чтении элемента\n");
             free(new_elem);
@@ -132,7 +133,7 @@ int add_elems_list(stack_list_t **stack_list, int num_elems)
         if (*stack_list == NULL)
             new_elem->num_elem = 1;
         else
-            new_elem->num_elem = (*stack_list)->num_elem++;
+            new_elem->num_elem = (*stack_list)->num_elem + 1;
         
         new_elem->next = *stack_list;
         *stack_list = new_elem;
@@ -141,7 +142,7 @@ int add_elems_list(stack_list_t **stack_list, int num_elems)
     return EXIT_SUCCESS;
 }
 
-void fill_random_list(stack_list_t **stack_list, int num_elems)
+int fill_random_list(stack_list_t **stack_list, int num_elems)
 {
     stack_list_t *new_elem;
     srand(time(NULL));
@@ -165,11 +166,13 @@ void fill_random_list(stack_list_t **stack_list, int num_elems)
         new_elem->next = *stack_list;
         *stack_list = new_elem;
     }
+
+    return EXIT_SUCCESS;
 }
 
-int add_addresses_removed_elems(int *num_elems, stack_list_t *stack_list, arr_free_area_t *arr)
+int add_addresses_removed_elems(int num_elems, stack_list_t *stack_list, arr_free_area_t *arr)
 {
-    stack_list_t *ptmp;
+    stack_list_t **ptmp;
     for (int i = 0; i < num_elems; i++)
     {
         ptmp = realloc(arr->arr, (arr->len + 1) * sizeof(stack_list_t*));

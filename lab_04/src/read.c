@@ -17,7 +17,7 @@ int read_method(int *method)
     return EXIT_SUCCESS;
 }
 
-int read_action(int *action)
+int read_action_arr(int *action)
 {
     if (scanf("%d", action) != 1)
     {
@@ -25,9 +25,43 @@ int read_action(int *action)
         return SCAN_ACTION_ERROR;
     }
 
-    if (*action < 0 || *action > 4)
+    if (*action < 0 || *action > 5)
     {
-        printf("Действие - целое число от 0 до 4\n");
+        printf("Действие - целое число от 0 до 5\n");
+        return VALUE_ACTION_ERROR;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int read_action_list(int *action)
+{
+    if (scanf("%d", action) != 1)
+    {
+        printf("Действие - целое число\n");
+        return SCAN_ACTION_ERROR;
+    }
+
+    if (*action < 0 || *action > 6)
+    {
+        printf("Действие - целое число от 0 до 6\n");
+        return VALUE_ACTION_ERROR;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int read_action_time(int *action)
+{
+    if (scanf("%d", action) != 1)
+    {
+        printf("Действие - целое число\n");
+        return SCAN_ACTION_ERROR;
+    }
+
+    if (*action < 0 || *action > 1)
+    {
+        printf("Действие - целое число от 0 до 1\n");
         return VALUE_ACTION_ERROR;
     }
 
@@ -42,7 +76,7 @@ int read_num_elems_add_array(int *num_elems, int len)
         return EXIT_SUCCESS;
     }
 
-    printf("Введите количество доабвляемых элементов: (не более %d)\n", STACK_SIZE - len);
+    printf("Введите количество добавляемых элементов (не более %d):\n", STACK_SIZE - len);
     if (scanf("%d", num_elems) != 1)
     {
         printf("Количество добавляемых элементов - натуральное число\n");
@@ -141,4 +175,25 @@ int read_num_elems_remove_list(int *num_elems, stack_list_t *stack_list)
         printf("Стек пуст\n");
         return EXIT_SUCCESS;
     }
+
+    printf("Введите количество удаляемых элементов: (не более %d)\n", stack_list->num_elem);
+    if (scanf("%d", num_elems) != 1)
+    {
+        printf("Количество удаляемых элементов - натуральное число\n");
+        return SCAN_NUM_ELEMS_ERROR;
+    }
+
+    if (*num_elems <= 0)
+    {
+        printf("Количество удаляемых элементов - натуральное число\n");
+        return VALUE_NUM_ELEMS_ERROR;
+    }
+
+    if (*num_elems > stack_list->num_elem)
+    {
+        printf("Слишком много элементов для удаления\n");
+        return OVERFLOW_ERROR;
+    }
+
+    return EXIT_SUCCESS;
 }

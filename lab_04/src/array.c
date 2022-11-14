@@ -12,7 +12,7 @@ int process_stack_as_array(void)
     while(1)
     {
         print_menu_arr();
-        rc = read_action(&action);
+        rc = read_action_arr(&action);
         if (rc != EXIT_SUCCESS)
             return rc;
 
@@ -66,6 +66,7 @@ int process_stack_as_array(void)
 
 int add_elems_array(int num_elems, stack_array_t *stack_array)
 {
+    printf("Введите %d элементов(а):\n", num_elems);
     for (int i = 0; i < num_elems; i++)
     {
         stack_array->p++;
