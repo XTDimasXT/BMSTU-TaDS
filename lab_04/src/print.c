@@ -26,7 +26,7 @@ void print_menu_list(void)
 void print_menu_time(void)
 {
     printf("\n");
-    printf("1. Сравнение времени и памяти для добавления\n");
+    printf("1. Сравнение времени и памяти для добавления и удаления\n");
     printf("0. Выход\n");
     printf("\n");
 }
