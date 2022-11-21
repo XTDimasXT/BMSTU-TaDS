@@ -14,10 +14,10 @@ typedef struct stack_list
     struct stack_list *next;
 } stack_list_t;
 
-typedef struct arr_free_area
+typedef struct arr_del_adresses
 {
     stack_list_t **arr;
     int len;
-} arr_free_area_t;
+} arr_del_adresses_t;
 
 #endif // __STRUCTS_H__

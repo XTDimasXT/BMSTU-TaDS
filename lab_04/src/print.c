@@ -137,9 +137,11 @@ void print_series_nums_list(stack_list_t *stack_list)
         printf("Убывающих серий не найдено\n");
 }
 
-void print_addresses_array(arr_free_area_t *arr)
+void print_addresses_array(arr_del_adresses_t *arr)
 {
+    if (arr->len == 0)
+        printf("Элементы не удалялись");
     for (int i = 0; i < arr->len; i++)
-        printf("%d %p\n", i, (void *)arr->arr[i]);
+        printf("%d | %p\n", i + 1, (void *)arr->arr[i]);
     printf("\n");
 }
