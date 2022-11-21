@@ -59,9 +59,9 @@ int read_action_time(int *action)
         return SCAN_ACTION_ERROR;
     }
 
-    if (*action < 0 || *action > 2)
+    if (*action < 0 || *action > 1)
     {
-        printf("Действие - целое число от 0 до 2\n");
+        printf("Действие - целое число от 0 до 1\n");
         return VALUE_ACTION_ERROR;
     }
 

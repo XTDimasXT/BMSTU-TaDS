@@ -24,7 +24,6 @@ void print_menu_list(void)
 void print_menu_time(void)
 {
     printf("1. Сравнение времени и памяти для добавления\n");
-    printf("2. Сравнение времени и памяти для удаления\n");
     printf("0. Выход\n");
 }
 
@@ -56,12 +55,14 @@ void print_series_nums_array(stack_array_t *stack_array)
     int prev_elem = *stack_array->p;
     stack_array->p--;
     int flag = 0;
+    int flag_count = 0;
     while (stack_array->len > 0)
     {
         if (*stack_array->p > prev_elem)
         {
             printf("%d ", prev_elem);
             flag = 1;
+            flag_count = 1;
         }
         else if (flag == 1)
         {
@@ -72,6 +73,9 @@ void print_series_nums_array(stack_array_t *stack_array)
         stack_array->p--;
         stack_array->len--;
     }
+
+    if (!flag_count)
+        printf("Убывающих серий не найдено");
     printf("\n");
 }
 
@@ -105,12 +109,14 @@ void print_series_nums_list(stack_list_t *stack_list)
     int prev_elem = stack_list->elem;
     stack_list = stack_list->next;
     int flag = 0;
+    int flag_count = 0;
     while (stack_list != NULL)
     {
         if (stack_list->elem > prev_elem)
         {
             printf("%d ", prev_elem);
             flag = 1;
+            flag_count = 1;
         }
         else if (flag == 1)
         {
@@ -126,6 +132,9 @@ void print_series_nums_list(stack_list_t *stack_list)
 
     if (stack_list->elem > prev_elem)
         printf("%d\n", stack_list->elem);
+
+    if (!flag_count)
+        printf("Убывающих серий не найдено\n");
 }
 
 void print_addresses_array(arr_free_area_t *arr)
