@@ -161,7 +161,7 @@ int fill_random_list(stack_list_t **stack_list, int num_elems)
         if (*stack_list == NULL)
             new_elem->num_elem = 1;
         else
-            new_elem->num_elem = (*stack_list)->num_elem++;
+            new_elem->num_elem = (*stack_list)->num_elem += 1;
         
         new_elem->next = *stack_list;
         *stack_list = new_elem;

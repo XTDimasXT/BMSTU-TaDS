@@ -23,7 +23,8 @@ void print_menu_list(void)
 
 void print_menu_time(void)
 {
-    printf("1. Сравнение времени и памяти\n");
+    printf("1. Сравнение времени и памяти для добавления\n");
+    printf("2. Сравнение времени и памяти для удаления\n");
     printf("0. Выход\n");
 }
 
@@ -52,28 +53,26 @@ void print_series_nums_array(stack_array_t *stack_array)
         return;
     }
 
-    int prev_elem;
-    int flag;
+    int prev_elem = *stack_array->p;
+    stack_array->p--;
+    int flag = 0;
     while (stack_array->len > 0)
     {
-        flag = 0;
-
+        if (*stack_array->p > prev_elem)
+        {
+            printf("%d ", prev_elem);
+            flag = 1;
+        }
+        else if (flag == 1)
+        {
+            printf("%d\n", prev_elem);
+            flag = 0;
+        }
         prev_elem = *stack_array->p;
         stack_array->p--;
         stack_array->len--;
-
-        while (*stack_array->p > prev_elem && stack_array->len > 0)
-        {
-            printf("%d ", prev_elem);
-            prev_elem = *stack_array->p;
-            stack_array->p--;
-            stack_array->len--;
-            flag = 1;
-        }
-
-        if (flag == 1)
-            printf("%d\n", prev_elem);
     }
+    printf("\n");
 }
 
 void print_list(stack_list_t **stack_list)
@@ -103,30 +102,35 @@ void print_series_nums_list(stack_list_t *stack_list)
         return;
     }
 
-    int prev_elem;
-    int flag;
-    while (stack_list != NULL && stack_list->next != NULL)
+    int prev_elem = stack_list->elem;
+    stack_list = stack_list->next;
+    int flag = 0;
+    while (stack_list != NULL)
     {
-        flag = 0;
-        prev_elem = stack_list->elem;
-        stack_list = stack_list->next;
-
-        while (stack_list->elem > prev_elem && stack_list != NULL)
+        if (stack_list->elem > prev_elem)
         {
             printf("%d ", prev_elem);
-            prev_elem = stack_list->elem;
-            stack_list = stack_list->next;
             flag = 1;
         }
-
-        if (flag == 1)
+        else if (flag == 1)
+        {
             printf("%d\n", prev_elem);
+            flag = 0;
+        }
+        if (stack_list->next == NULL)
+            break;
+            
+        prev_elem = stack_list->elem;
+        stack_list = stack_list->next;
     }
+
+    if (stack_list->elem > prev_elem)
+        printf("%d\n", stack_list->elem);
 }
 
 void print_addresses_array(arr_free_area_t *arr)
 {
     for (int i = 0; i < arr->len; i++)
-        printf("%p ", (void *)arr->arr[i]);
+        printf("%d %p\n", i, (void *)arr->arr[i]);
     printf("\n");
 }
