@@ -33,7 +33,7 @@ int compare_time(void)
 
         if (action == 1)
         {
-            for (int num_elems = 5000; num_elems <= STACK_SIZE; num_elems += 5000)
+            for (int num_elems = STACK_SIZE / 10; num_elems <= STACK_SIZE; num_elems += STACK_SIZE / 10)
             {   
                 unsigned long long beg_common;
                 unsigned long long end_common;
@@ -49,8 +49,8 @@ int compare_time(void)
                     end_common = milliseconds_now();
                     unsigned long long time_common = end_common - beg_common;
 
-                    printf("========================================================\n");
-                    printf("Количество элементов - %d | Процент заполняемости - %d\n\n" , num_elems, num_elems * 100 / STACK_SIZE);
+                    printf("=====================================================\n");
+                    printf("Количество элементов - %d | Заполняемость - %d%%\n\n" , num_elems, num_elems * 100 / STACK_SIZE);
                     printf("Затраченное время под стек-массив - %llu мc\n", time_common);
                     printf("Затраченная память под стек-массив - %lu байт\n\n", STACK_SIZE * sizeof(stack_array_t));
                     
@@ -64,9 +64,10 @@ int compare_time(void)
                     time_common = end_common - beg_common;
 
                     printf("Затраченное время под стек-список - %llu мc\n", time_common);
-                    printf("Затраченная память под стек-список - %lu байт\n\n", num_elems * (2 * sizeof(stack_list_t) + sizeof(int)));
+                    printf("Затраченная память под стек-список - %lu байт\n\n", num_elems * (2 * (sizeof(stack_list_t) + sizeof(int))));
                 }
             }
+            printf("=====================================================\n");
         }
         else if (action == 0)
         {

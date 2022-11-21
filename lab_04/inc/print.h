@@ -11,9 +11,9 @@ void print_menu_list(void);
 void print_menu_time(void);
 void print_choice(void);
 void print_array(stack_array_t *stack_array);
-void print_series_nums_array(stack_array_t *stack_array);
+void print_series_nums_array(stack_array_t stack_array);
 void print_list(stack_list_t **stack_list);
 void print_series_nums_list(stack_list_t *stack_list);
-void print_addresses_array(arr_del_adresses_t *arr);
+void print_addresses_array(arr_adr_removed_elems_t *arr);
 
 #endif // __PRINT_H__

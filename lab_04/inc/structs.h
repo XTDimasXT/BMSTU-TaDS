@@ -14,10 +14,10 @@ typedef struct stack_list
     struct stack_list *next;
 } stack_list_t;
 
-typedef struct arr_del_adresses
+typedef struct arr_adr_removed_elems
 {
     stack_list_t **arr;
     int len;
-} arr_del_adresses_t;
+} arr_adr_removed_elems_t;
 
 #endif // __STRUCTS_H__

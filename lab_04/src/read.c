@@ -25,9 +25,9 @@ int read_action_arr(int *action)
         return SCAN_ACTION_ERROR;
     }
 
-    if (*action < 0 || *action > 5)
+    if (*action < 0 || *action > 4)
     {
-        printf("Действие - целое число от 0 до 5\n");
+        printf("Действие - целое число от 0 до 4\n");
         return VALUE_ACTION_ERROR;
     }
 
@@ -42,9 +42,9 @@ int read_action_list(int *action)
         return SCAN_ACTION_ERROR;
     }
 
-    if (*action < 0 || *action > 6)
+    if (*action < 0 || *action > 5)
     {
-        printf("Действие - целое число от 0 до 6\n");
+        printf("Действие - целое число от 0 до 5\n");
         return VALUE_ACTION_ERROR;
     }
 

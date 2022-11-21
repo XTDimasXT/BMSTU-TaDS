@@ -31,17 +31,6 @@ int process_stack_as_array(void)
         {
             int num_elems;
 
-            rc = read_num_elems_add_array(&num_elems, stack_array.len);
-            if (rc != EXIT_SUCCESS)
-                return rc;
-            
-            if (stack_array.len != STACK_SIZE)
-                fill_random_array(num_elems, &stack_array);
-        }
-        else if (action == 3)
-        {
-            int num_elems;
-
             rc = read_num_elems_remove_array(&num_elems, stack_array.len);
             if (rc != EXIT_SUCCESS)
                 return rc;
@@ -50,10 +39,10 @@ int process_stack_as_array(void)
                 remove_elems_array(num_elems, &stack_array);
 
         }
-        else if (action == 4)
+        else if (action == 3)
             print_array(&stack_array);
-        else if (action == 5)
-            print_series_nums_array(&stack_array);
+        else if (action == 4)
+            print_series_nums_array(stack_array);
         else if (action == 0)
             break;
         

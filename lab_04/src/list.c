@@ -4,7 +4,7 @@ int process_stack_as_list(void)
 {
     int rc;
     stack_list_t *stack_list = NULL;
-    arr_del_adresses_t arr;
+    arr_adr_removed_elems_t arr;
     arr.arr = NULL;
     arr.len = 0;
     int action;
@@ -39,21 +39,6 @@ int process_stack_as_list(void)
         {
             int num_elems;
 
-            rc = read_num_elems_add_list(&num_elems, stack_list);
-            if (rc != EXIT_SUCCESS)
-            {
-                free_stack_list(&stack_list);
-                free(arr.arr);
-                return rc;
-            }
-            
-            if ((stack_list != NULL && stack_list->num_elem != STACK_SIZE) || stack_list == NULL)
-                fill_random_list(&stack_list, num_elems);
-        }
-        else if (action == 3)
-        {
-            int num_elems;
-
             rc = read_num_elems_remove_list(&num_elems, stack_list);
             if (rc != EXIT_SUCCESS)
             {
@@ -73,11 +58,11 @@ int process_stack_as_list(void)
                 remove_elems_list(&stack_list, num_elems);
             }
         }
-        else if (action == 4)
+        else if (action == 3)
             print_list(&stack_list);
-        else if (action == 5)
+        else if (action == 4)
             print_series_nums_list(stack_list);
-        else if (action == 6)
+        else if (action == 5)
             print_addresses_array(&arr);
         else if (action == 0)
         {
@@ -170,7 +155,7 @@ int fill_random_list(stack_list_t **stack_list, int num_elems)
     return EXIT_SUCCESS;
 }
 
-int add_addresses_removed_elems(int num_elems, stack_list_t *stack_list, arr_del_adresses_t *arr)
+int add_addresses_removed_elems(int num_elems, stack_list_t *stack_list, arr_adr_removed_elems_t *arr)
 {
     stack_list_t **ptmp;
     for (int i = 0; i < num_elems; i++)
