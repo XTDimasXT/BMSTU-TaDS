@@ -99,7 +99,7 @@ void print_list(stack_list_t **stack_list)
     stack_list_t *ptmp = *stack_list;
     while (ptmp != NULL)
     {
-        printf("%d ", ptmp->elem);
+        printf("%d | %p\n", ptmp->elem, (void*)(ptmp));
         ptmp = ptmp->next;
     }
     printf("\n");
