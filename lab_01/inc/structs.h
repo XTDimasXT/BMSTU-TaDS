@@ -3,17 +3,12 @@
 
 #include "constants.h"
 
-typedef struct
+typedef struct 
 {
-	char sign;
-	int mantissa[MANTISSA_LEN + 1];
+    char sign;
+    int mantissa[ARR_LEN];
+    size_t size;
     int order;
-} float_t;
-
-typedef struct
-{
-	char sign;
-	int digits[MANTISSA_LEN];
-} integer_t;
+} num_t;
 
 #endif // __STRUCTS_H__

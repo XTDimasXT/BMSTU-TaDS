@@ -1,150 +1,185 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "../inc/structs.h"
-#include "../inc/operations.h"
-#include "../inc/constants.h"
-#include "../inc/errors.h"
+#include "operations.h"
 
-void normalize(float_t *a)
+void remove_zeroes(num_t *num)
 {
-    int deletion_order = 0;
-    for (int i = 0; i < MANTISSA_LEN; i++)
-    {
-        if (a->mantissa[i] == 0)
-            deletion_order++;
-        else
-            break;
-    }
-
-    if (deletion_order != 0)
-    {
-        for (int i = 0; i < MANTISSA_LEN - deletion_order; i++)
-            a->mantissa[i] = a->mantissa[i + deletion_order];
-        for (int i = MANTISSA_LEN - deletion_order; i <= MANTISSA_LEN; i++)
-            a->mantissa[i] = 0;
-    }
-
-    a->order -= deletion_order;
+    for (int i = num->size - 1; i >= 0 && !num->mantissa[i]; i--)
+        num->size--;
 }
 
-int pre_division(int a_digits[], int b_digits[], int a_signif, int b_signif)
+void swap_right(int arr[ARR_LEN], int n)
 {
-    int a[MANTISSA_LEN + 1] = {0};
-    for (int i = 0; i < a_signif; i++)
-        a[i] = a_digits[i];
-    int res = -1;
-    int flag = 1;
-    for (; flag; res++)
+    for (int i = n - 1; i >= 0; i--)
+        arr[i + 1] = arr[i];
+    arr[0] = 0;
+}
+
+void rounding(num_t *num, int n)
+{
+    int remainder = 0;
+    int k = n - 1;
+    num->mantissa[k]++;
+    while ((num->mantissa[k] += remainder) > 9)
     {
-        for (int i = 1; (i < b_signif + 1) && flag; i++)
+        if (k == 0 && num->mantissa[k] > 9)
         {
-            if (a[a_signif - i] >= b_digits[b_signif - i])
-                a[a_signif - i] -= b_digits[b_signif - i];
-            else
-            {
-                for (int j = i + 1; (j < a_signif + 1) && (a[a_signif - i] < 10); j++)
-                    if (a[a_signif - j] > 0)
-                    {
-                        a[a_signif - j]--;
-                        for (int k = j - 1; k != i; k--)
-                            a[a_signif - k] += 9;
-                        a[a_signif - i] += 10;
-                    }
-                if (a[a_signif - i] >= b_digits[b_signif - i])
-                    a[a_signif - i] -= b_digits[b_signif - i];
-                else
-                    flag = 0;
-            }
+            k = n - 1;
+            swap_right(num->mantissa, n);
+            num->mantissa[0] = num->mantissa[1] / 10;
+            num->mantissa[1] %= 10;
+            num->order++;
         }
-        if (flag != 0)
-            for (int i = 0; i < a_signif; i++)
-                a_digits[i] = a[i];
+
+        remainder = num->mantissa[k] / 10;
+        num->mantissa[k] %= 10;
+        k--;
     }
-    return res;
+    num->order++;
 }
 
-void division(float_t *a, integer_t b, int b_signif, float_t *res)
+void multiplication(num_t *num1, num_t *num2, num_t *res)
 {
-    int beg;
-    int end;
-    int cur;
-    int cur_res;
-    if (a->sign == b.sign)
-        res->sign = '+';
-    else
-        res->sign = '-';
-    res->order = a->order;
-    
-    for (beg = 0, end = 0, cur = 0; end < MANTISSA_LEN; end++, cur++)
-    {
-        cur_res = pre_division(&(a->mantissa[beg]), b.digits, end - beg + 1, b_signif);
-        if (cur_res < 0 || cur_res > 9)
-            cur_res = 0;
-        res->mantissa[cur] = cur_res;
-        if ((a->mantissa[beg]) == 0)
-            beg++;
-    }
-}
+    int remainder = 0;
+    int res_m = 0;
 
-void round_res(float_t *a)
-{
-    if ((a->mantissa[MANTISSA_LEN]) >= 5)
+    for (int i = num2->size - 1; i >= 0; i--)
     {
-        a->mantissa[MANTISSA_LEN - 1]++;
-        for (int i = MANTISSA_LEN - 1; i > 0; i--)
+        int flag = 0;
+        remainder = 0;
+
+        for (int j = num1->size - 1; j >= 0; j--)
         {
-            if ((a->mantissa[i] > 9))
+            int x = num2->mantissa[i] * num1->mantissa[j] + remainder;
+
+            if (j == 0 && x > 9)
             {
-                a->mantissa[i] = 0;
-                (a->mantissa[i - 1])++;
-            }
-            else
+                x += res->mantissa[j];
+            
+                res_m++;
+                swap_right(res->mantissa, num1->size + res_m);
+                res->mantissa[0] = x / 10;
+                res->mantissa[1] = x % 10;
+                if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] >= 5)
+                {
+                    rounding(res, num1->size + res_m - 1);
+                    res_m--;
+                }
+                else if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] < 5)
+                {
+                    res->mantissa[num1->size + res_m - 1] = 0;
+                    res_m--;
+                    res->order++;
+                }
+
+                flag = 1;
                 break;
-        }
-        if ((a->mantissa[0]) > 9)
-        {
-            for (int i = MANTISSA_LEN; i > 1; i--)
-                a->mantissa[i] = a->mantissa[i - 1];
-            a->mantissa[0] = 1;
-            a->mantissa[1] = 0;
-            a->order++;
-        }
-    }
-    a->mantissa[MANTISSA_LEN] = 0;
-}
-
-void print_res(float_t a)
-{
-    printf("%c", a.sign);
-    printf("0.");
-    if (a.order == -60 || a.order == -61)
-        printf("0E0\n");
-    else
-    {
-        for (int i = MANTISSA_LEN - 1; i >= 0; i--)
-            if (a.mantissa[i])
-            {
-                for (int j = 0; j <= i; j++)
-                    printf("%d", a.mantissa[j]);
-                i = -1;
             }
-        printf("E");
-        if (a.order > 0)
-            printf("+");
-        printf("%d\n", a.order);
+            remainder = (res->mantissa[j] + x) / 10;
+            res->mantissa[j] = (res->mantissa[j] + x) % 10;
+        }
+
+        if (!flag && i && !remainder)
+        {
+            res_m++;
+            swap_right(res->mantissa, num1->size + res_m);
+            if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] >= 5)
+            {
+                rounding(res, num1->size + res_m - 1);
+                res_m--;
+            }
+            else if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] < 5)
+            {
+                res->mantissa[num1->size + res_m - 1] = 0;
+                res_m--;
+                res->order++;
+            }
+        }
+        else if (!flag && remainder)
+        {
+            res_m++;
+            swap_right(res->mantissa, num1->size + res_m);
+            res->mantissa[0] += remainder % 10;
+            if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] >= 5)
+            {
+                rounding(res, num1->size + res_m - 1);
+                res_m--;
+            }
+            else if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] < 5)
+            {
+                res->mantissa[num1->size + res_m - 1] = 0;
+                res_m--;
+                res->order++;
+            }
+        }
+    }
+    res->size = num1->size + res_m;
+}
+
+void print_res(num_t *num)
+{
+    printf("Результат:\n");
+    printf("||0---------10--------20--------30\n");
+    printf("|||---------|---------|---------|\n");
+    printf("%c0.", num->sign);
+    if (num->size == 0)
+        printf("0");
+    else
+        for (size_t i = 0; i < num->size; i++)
+            printf("%hd", num->mantissa[i]);
+    printf("E");
+    if (num->order >= 0)
+        printf("+");
+    printf("%d\n", num->order);
+}
+
+void print_error(int rc)
+{
+    switch (rc)
+    {
+    case INT_STR_ERROR:
+        printf("Целое число не было введено\n");
+        break;
+    case FLOAT_STR_ERROR:
+        printf("Вещественное число не было введено\n");
+        break;
+    case STRING_OVERFLOW_ERROR:
+        printf("Переполнение строки\n");
+        break;
+    case EPS_ERROR:
+        printf("Некорректное использование E\n");
+        break;
+    case SIGN_ERROR:
+        printf("Некорректный ввод знака\n");
+        break;
+    case POINT_ERROR:
+        printf("Некорректный ввод точки\n");
+        break;
+    case MANTISSA_OVERFLOW_ERROR:
+        printf("Переполнение мантиссы\n");
+        break;
+    case ORDER_OVERFLOW_ERROR:
+        printf("Порядок по модулю больше 100.000\n");
+        break;
+    case BAD_INTEGER_ERROR:
+        printf("Целое число не соответствует формату\n");
+        break;
+    case BAD_FLOAT_ERROR:
+        printf("Вещественное число не соответствует формату\n");
+        break;
+    default:
+        printf("Неизвестная ошибка\n");
+        break;
     }
 }
 
-void print_integer(integer_t b, int int_len)
+void init_num(num_t *num)
 {
-    printf("%c", b.sign);
-    for (int i = int_len - 1; i > 0; i--)
-        if (b.digits[i])
-        {
-            for (int j = 0; j <= i; j++)
-                printf("%d", b.digits[j]);
-            i = -1;
-        }
+    num->sign = '+';
+    num->size = 0;
+    num->order = 0;
+
+    for (size_t i = 0; i < LEN; i++)
+        num->mantissa[i] = 0;
 }

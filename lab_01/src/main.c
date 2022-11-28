@@ -1,53 +1,82 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "../inc/constants.h"
-#include "../inc/errors.h"
-#include "../inc/input.h"
-#include "../inc/operations.h"
-#include "../inc/structs.h"
+#include "constants.h"
+#include "errors.h"
+#include "input.h"
+#include "operations.h"
+#include "structs.h"
 
 int main(void)
 {
-    float_t a;
-    integer_t b;
-    float_t res;
+    num_t float_num;
+    num_t int_num;
+    num_t res;
 
-    memset(&a, 0, sizeof(float_t));
-    memset(&b, 0, sizeof(integer_t));
-    memset(&res, 0, sizeof(float_t));
+    int rc;
 
-    printf("Введите действительное число (делимое):\n");
-    printf("Примеры ввода: +123.321E-24 или -15123.123 или +123\n");
-    int rc = my_float_input(&a);
-    printf("\n");
-    if (rc != EXIT_SUCCESS)
+    init_num(&float_num);
+    init_num(&int_num);
+    init_num(&res);
+
+    printf("Введите действительное число (Например: +123.41E+14 | 123.41 | -123):\n");
+    printf("---------10--------20--------30\n");
+    printf("---------|---------|---------|\n");
+
+    rc = get_float_num(&float_num);
+    if (rc)
+    {
+        print_error(rc);
         return rc;
-    normalize(&a);
+    }
+
+    printf("Введите целое число: (Например: -1323 | 0 | 321)\n");
+
+    rc = get_int_num(&int_num);
+    if (rc)
+    {
+        print_error(rc);
+        return rc;
+    }
+
+    if (float_num.sign ==  int_num.sign)
+        res.sign = '+';
+    else
+        res.sign = '-';
     
-    int len = 0;
-    printf("Введите целое число (делитель):\n");
-    printf("Примеры ввода: +5351 или -125124\n");
-    rc = my_integer_input(&b, &len);
-    printf("\n");
-    if (rc != EXIT_SUCCESS)
-        return rc;
+    if (float_num.size > int_num.size)
+        multiplication(&float_num, &int_num, &res);
+    else
+        multiplication(&int_num, &float_num, &res);
 
-    division(&a, b, len, &res);
-    round_res(&res);
-    normalize(&res);
-    if (res.order < MIN_ORDER)
+    if (!float_num.order || float_num.order == (int)float_num.size)
+        res.order += res.size;
+    else if (float_num.order && (float_num.order > 0 || res.size < int_num.size + float_num.size))
+        res.order += int_num.size + float_num.order - 1;
+    else if (float_num.order && float_num.order < 0)
+        res.order += int_num.size + float_num.order;
+
+    remove_zeroes(&res);
+    int flag_zero = 1;
+    for (int i = 0; i < 30; i++)
+        if (res.mantissa[i] != 0)
+            flag_zero = 0;
+
+    if (!res.mantissa[0])
+        res.sign = '+';
+    if (flag_zero == 1)
     {
-        printf("Результат порядка меньше критического\n");
-        return ORDER_ERROR;
+        printf("Результат:\n");
+        printf("%c0.0E0\n", res.sign);
     }
-    if (res.order > MAX_ORDER)
+    else if (res.order >= MAX_ORDER || res.order <= MIN_ORDER)
     {
-        printf("Результат порядка больше критического\n");
-        return ORDER_ERROR;
+        rc = ORDER_OVERFLOW_ERROR;
+        print_error(rc);
+        return rc;
     }
-    printf("Результат деления:\n");
-        print_res(res);
+    else
+        print_res(&res);
+
     return EXIT_SUCCESS;
 }

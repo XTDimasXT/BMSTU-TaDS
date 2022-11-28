@@ -1,160 +1,150 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-#include "../inc/structs.h"
-#include "../inc/input.h"
-#include "../inc/constants.h"
-#include "../inc/errors.h"
+#include "input.h"
 
-int my_float_input(float_t *a)
+int get_float_num(num_t *num)
 {
-    char symb = getchar();
-    if (symb == '\n')
-    {
-        printf("Пустой ввод\n");
-        return EMPTY_INPUT_ERROR;
-    }
-    if (symb != '+' && symb != '-')
-    {
-        printf("Ошибка ввода: вначале не был введен знак\n");
-        return SIGN_ERROR;
-    }
-    a->sign = symb;
+    char str[STR_LEN];
+    int n = 0;
+    int m = 0;
+    int order = 0;
+    int order_p = 0;
+    int sign = 0;
+    int eps = 0;
+    int point = 0;
 
-    int i;
-    int addition_order = 0;
-    int flag_dot = 0;
-    int flag_digit = 0;
+    int flag = 0;
+    size_t i = 0;
 
-    for (i = 0, symb = getchar(); (symb != '\n') && (symb != 'e') && (symb != 'E'); symb = getchar())
+    if (fgets(str, STR_LEN + 2, stdin) == NULL)
+        return FLOAT_STR_ERROR;
+    if (str[strlen(str) - 1] == '\n')
+        str[strlen(str) - 1] = '\0';
+    if (strlen(str) > STR_LEN)
+        return STRING_OVERFLOW_ERROR;
+    if (strlen(str) == 0)
+        return FLOAT_STR_ERROR;
+    if (str[i] == 'e' || str[i] == 'E')
+        return EPS_ERROR;
+    if (str[i] == '-' || str[i] == '+')
     {
-        if (i >= MANTISSA_LEN)
+        num->sign = str[i];
+        i++;
+        sign = 1;
+    }
+
+    while (i < (size_t)(LEN + point + sign + 1) && str[i] != '\0' && !eps)
+    {
+        if (!point && (str[i] == '.' || str[i] == ','))
+            point = 1;
+        else if (str[i] == 'e' || str[i] == 'E')
+            eps = 1;
+        else if (isdigit(str[i]))
         {
-            printf("Произошло переполнение\n");
-            return OVERFLOW_ERROR;
-        }
-        if (symb == '.')
-        {
-            if (flag_dot == 0)
-                flag_dot = 1;
-            else
+            if (str[i] == '0' && !flag)
             {
-                printf("Ошибка ввода: было введено более одной точки\n");
-                return INPUT_DOT_ERROR;
+                if (point)
+                    order_p--;
+                i++;
+                continue;
             }
+            if (str[i] != '0')
+            {
+                if (!flag)
+                    flag = 1;
+            }
+            num->mantissa[m + n] = (int)(str[i] - '0');
+            if (point)
+                n++;
+            else
+                m++;
         }
         else
         {
-            if ((symb >= '0') && (symb <= '9'))
-            {
-                if (flag_dot == 0)
-                {
-                    if ((symb > '0') || (i > 0))
-                    {
-                        a->mantissa[i] = atoi(&symb);
-                        flag_digit = 1;
-                        addition_order++;
-                        i++;
-                    }
-                }
-                else
-                {
-                    if ((symb > '0') || (flag_digit != 0))
-                    {
-                         a->mantissa[i] = atoi(&symb);
-                         flag_digit = 1;
-                         i++;
-                    }
-                    else
-                        addition_order--;
-                }
-            }
+            if (str[i] == '-' || str[i] == '+')
+                return SIGN_ERROR;
+            if (str[i] == '.' || str[i] == ',')
+                return POINT_ERROR;
             else
-            {
-                printf("Ошибка ввода: были введены не цифры\n");
-                return INPUT_DIGIT_ERROR;
-            }
+                return BAD_FLOAT_ERROR;
         }
+        i++;
     }
 
-    if ((symb == 'e') || (symb == 'E'))
+    if ((i - point - eps - sign) > LEN)
+        return MANTISSA_OVERFLOW_ERROR;
+
+    num->size = m + n;
+
+    if (eps)
     {
-        if (scanf("%d", &(a->order)) != 1)
+        if (str[i] == '-' || str[i] == '+')
         {
-            printf("Ошибка ввода: в порядке были введены не цифры\n");
-            return TYPE_ERROR;
+            if (str[i] == '-')
+                sign = 1;
+            i++;
         }
-        if (a->order < MIN_ORDER)
+        for (; str[i] != '\0'; i++)
         {
-            printf("Порядок меньше критического значения\n");
-            return ORDER_ERROR;
+            if (isdigit(str[i]))
+                order = order * 10 + (int)(str[i] - '0');
+            else
+                if (str[i] == '+' || str[i] == '-')
+                    return SIGN_ERROR;
+                else if (str[i] == 'E' || str[i] == 'e')
+                    return EPS_ERROR;
+                else
+                    return BAD_FLOAT_ERROR;
         }
-        else if (a->order > MAX_ORDER)
-        {
-            printf("Порядок больше критического значения\n");
-            return ORDER_ERROR;
-        }
-        getchar();
+        if (sign)
+            order *= -1;
     }
+    if (num->size)
+        num->order = order_p + order + m;
+    else
+        num->size = 1;
+    if (order >= MAX_ORDER || order <= MIN_ORDER)
+        return ORDER_OVERFLOW_ERROR;
 
-    if (i == 0 && a->order != 0)
-    {
-        printf("Если хотите ввести ноль - вводите его c нулевым порядком\n");
-        return ZERO_ERROR;
-    }
-    a->order += addition_order;
-
-    return EXIT_SUCCESS;
+    return 0;
 }
 
-int my_integer_input(integer_t *b, int *int_len)
+int get_int_num(num_t *num)
 {
-    char symb = getchar();
-    if (symb == '\n')
-    {
-        printf("Пустой ввод");
-        return EMPTY_INPUT_ERROR;
-    }
-    if (symb != '+' && symb != '-')
-    {
-        printf("Ошибка ввода: вначале не был введен знак\n");
-        return SIGN_ERROR;
-    }
-    b->sign = symb;
+    char str[STR_LEN];
+    size_t i = 0;
+    int m = 0;
+    int sign = 0;
 
-    int i;
-    int flag_zero = 1;
-    symb = getchar();
-
-    for (i = 0; symb != '\n'; symb = getchar())
+    if (fgets(str, STR_LEN + 2, stdin) == NULL)
+        return INT_STR_ERROR;
+    if (str[strlen(str) - 1] == '\n')
+        str[strlen(str) - 1] = '\0';
+    if (strlen(str) > STR_LEN)
+        return STRING_OVERFLOW_ERROR;
+    if (strlen(str) == 0)
+        return INT_STR_ERROR;
+    if (str[i] == '-' || str[i] == '+')
     {
-        if (i >= MANTISSA_LEN)
-        {
-            printf("Произошло переполнение");
-            return OVERFLOW_ERROR;
-        }
-        if (symb >= '0' && symb <= '9')
-        {
-            if (symb > '0' || flag_zero == 0)
-            {
-                b->digits[(*int_len)] = atoi(&symb);
-                (*int_len)++;
-                flag_zero = 0;
-                i++;
-            }
-        }
+        sign = 1;
+        num->sign = str[i];
+        i++;
+    }
+
+    for (; str[i] != '\0'; i++)
+    {
+        if (isdigit(str[i]))
+            num->mantissa[m++] = (int)(str[i] - '0');
         else
-        {
-            printf("Ошибка ввода: были введены не цифры\n");
-            return INPUT_DIGIT_ERROR;
-        }
+            return BAD_INTEGER_ERROR;
+        if ((i - sign) >= LEN)
+            return MANTISSA_OVERFLOW_ERROR;
     }
-    if (flag_zero == 1)
-    {
-        printf("Деление на ноль невозможно\n");
-        return DIVISION_BY_ZERO;
-    }
+
+    num->size = m;
     
     return EXIT_SUCCESS;
 }
