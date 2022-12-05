@@ -41,7 +41,7 @@ void insert_tree(branch_t **head, char *val)
                 tmp = tmp->right;
                 continue;
             }
-            else 
+            else
             {
                 tmp->right = allocate_node(val, tmp);
                 return;
@@ -66,15 +66,10 @@ void insert_tree(branch_t **head, char *val)
 
 int find_word(branch_t *root, char *str)
 {
-    if (strcmp(root->word, str) == 0)
-        return 1;
-    
-    if (root->left != NULL)
-        find_word(root->left, str);
-    if (root->right != NULL)
-        find_word(root->right, str);
-    
-    return 0;
+    branch_t *target = get_node(root, str);
+    if (!target)
+        return FIND_ERROR;
+    return EXIT_SUCCESS;
 }
 
 void delete(branch_t *cur)
@@ -111,10 +106,14 @@ void delete(branch_t *cur)
     free(cur);
 }
 
-void delete_word(branch_t *root, char *str)
+int delete_word(branch_t *root, char *str)
 {
     branch_t *target = get_node(root, str);
+    if (!target)
+        return DELETE_ERROR;
     delete(target);
+
+    return EXIT_SUCCESS;
 }
 
 branch_t *get_deep_node(branch_t *root)

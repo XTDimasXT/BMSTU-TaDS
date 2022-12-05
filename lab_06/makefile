@@ -6,7 +6,7 @@ HDRS_DIR := ./inc
 HDRS := $(wildcard $(HDRS_DIR)/*.h)
 OBJS_DIR := ./out
 $(shell mkdir -p $(OBJS_DIR))
-OBJS := $(OBJS_DIR)/binary_tree.o $(OBJS_DIR)/read_print.o
+OBJS := $(OBJS_DIR)/binary_tree.o $(OBJS_DIR)/compare.o $(OBJS_DIR)/read_print.o
 
 CFLAGS := -I$(HDRS_DIR) -std=c99 -Wall -Werror -Wpedantic -Wextra
 

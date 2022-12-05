@@ -16,9 +16,9 @@ int read_action(int *action)
         return SCAN_ACTION_ERROR;
     }
 
-    if (*action < 0 || *action > 7)
+    if (*action < 0 || *action > 5)
     {
-        printf("Номер меню - целое число от 0 до 7\n");
+        printf("Номер меню - целое число от 0 до 5\n");
         return VALUE_ACTION_ERROR;
     }
 
@@ -28,20 +28,17 @@ int read_action(int *action)
 void print_choice(void)
 {
     printf("\n");
-    printf("1. Добавить узлы из файла\n");
-    printf("2. Удалить узел\n");
+    printf("1. Инициализировать дерево из файла\n");
+    printf("2. Исключить узел\n");
     printf("3. Найти указанное слово\n");
     printf("4. Вывести дерево\n");
-    printf("5. Сравнить эффективность алгоритмов сортировки\n");
-    printf("6. Сравнить эффективность алгоритмов поиска\n");
-    printf("7. Сравнить время поиска в дереве и файле\n");
+    printf("5. Сравнить время поиска в дереве и файле\n");
     printf("0. Выход\n");
     printf("\n");
 }
 
-int read_file(binary_tree_t *binary_tree)
+int read_file(FILE *f, binary_tree_t *binary_tree)
 {
-    FILE *f = fopen("file.txt", "r");
     if (f == NULL)
         return FOPEN_ERROR;
     
@@ -100,16 +97,18 @@ void to_dot(void *node, void *param)
         fprintf(out, "%s -> %s;\n", node_cur->word, node_cur->left->word);
     else
     {
-        fprintf(out, "null%d [shape=point];\n", cnt);
-        fprintf(out, "%s -> null%d;\n", node_cur->word, cnt++);
+        //fprintf(out, "null%d [shape=point];\n", cnt);
+        //fprintf(out, "%s -> null%d;\n", node_cur->word, cnt++);
+        ;
     }
     
     if (node_cur->right != NULL)
         fprintf(out, "%s -> %s;\n", node_cur->word, node_cur->right->word);
     else
     {
-        fprintf(out, "null%d [shape=point];\n", cnt);
-        fprintf(out, "%s -> null%d;\n", node_cur->word, cnt++);
+        //fprintf(out, "null%d [shape=point];\n", cnt);
+        //fprintf(out, "%s -> null%d;\n", node_cur->word, cnt++);
+        ;
     }
 }
 
@@ -119,4 +118,9 @@ void export_to_dot(FILE *f, char *tree_name, void *tree)
     apply_pre(tree, to_dot, f);
     fprintf(f, "}\n");
     cnt = 0;
+}
+
+void insert_file(FILE *f, char *str)
+{
+    fprintf(f, "%s\n", str);
 }

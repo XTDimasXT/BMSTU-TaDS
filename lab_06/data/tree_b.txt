@@ -1,0 +1,10 @@
+call
+darkside
+dot
+get
+mem
+rip
+river
+rofl
+rose
+zzzemelya
