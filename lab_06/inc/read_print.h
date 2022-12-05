@@ -1,0 +1,17 @@
+#ifndef __READ_PRINT_H__
+#define __READ_PRINT_H__
+
+#include "binary_tree.h"
+#include "errors.h"
+#include "structs.h"
+
+int read_action(int *action);
+void print_choice(void);
+int read_file(binary_tree_t *binary_tree);
+int read_line(FILE *f, binary_tree_t *binary_tree);
+void apply_pre(branch_t *tree, action_t f, void *arg);
+void print_tree(FILE *f, branch_t *head);
+void to_dot(void *node, void *param);
+void export_to_dot(FILE *f, char *tree_name, void *tree);
+
+#endif // __READ_PRINT_H__
