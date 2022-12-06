@@ -1,15 +1,8 @@
 #ifndef __ERRORS_H__
 #define __ERRORS_H__
 
-#define INT_STR_ERROR 1
-#define FLOAT_STR_ERROR 2
-#define STRING_OVERFLOW_ERROR 3
-#define EPS_ERROR 4
-#define SIGN_ERROR 5
-#define POINT_ERROR 6
-#define MANTISSA_OVERFLOW_ERROR 7
-#define ORDER_OVERFLOW_ERROR 8
-#define BAD_INTEGER_ERROR 9
-#define BAD_FLOAT_ERROR 10
+#define NUM_READ_ERROR 1
+#define ZERO_DIVISION_ERROR 2
+#define EXPONENT_ERROR 3
 
 #endif // __ERRORS_H__

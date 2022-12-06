@@ -3,9 +3,10 @@
 
 #include "constants.h"
 #include "errors.h"
+#include "operations.h"
 #include "structs.h"
 
-int get_float_num(num_t *num);
-int get_int_num(num_t *num);
+int big_int_input(big_int_t *num);
+int big_float_input(big_float_t *num);
 
 #endif // __INPUT_H__
