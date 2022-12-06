@@ -5,146 +5,132 @@
 
 #include "input.h"
 
-int get_float_num(num_t *num)
+int big_int_input(big_int_t *num)
 {
-    char str[STR_LEN];
-    int n = 0;
-    int m = 0;
-    int order = 0;
-    int order_p = 0;
-    int sign = 0;
-    int eps = 0;
-    int point = 0;
+    num->is_negative = 0;
+    size_t len = 0;
+    char current = getc(stdin);
 
-    int flag = 0;
-    size_t i = 0;
-
-    if (fgets(str, STR_LEN + 2, stdin) == NULL)
-        return FLOAT_STR_ERROR;
-    if (str[strlen(str) - 1] == '\n')
-        str[strlen(str) - 1] = '\0';
-    if (strlen(str) > STR_LEN)
-        return STRING_OVERFLOW_ERROR;
-    if (strlen(str) == 0)
-        return FLOAT_STR_ERROR;
-    if (str[i] == 'e' || str[i] == 'E')
-        return EPS_ERROR;
-    if (str[i] == '-' || str[i] == '+')
+    if (current == '-')
+        num->is_negative = 1;
+    else if (current == '+')
+        num->is_negative = 0;
+    else if (isdigit(current))
     {
-        num->sign = str[i];
-        i++;
-        sign = 1;
+        num->mantissa[len] = current - '0';
+        len++; 
     }
-
-    while (i < (size_t)(LEN + point + sign + 1) && str[i] != '\0' && !eps)
-    {
-        if (!point && (str[i] == '.' || str[i] == ','))
-            point = 1;
-        else if (str[i] == 'e' || str[i] == 'E')
-            eps = 1;
-        else if (isdigit(str[i]))
-        {
-            if (str[i] == '0' && !flag)
-            {
-                if (point)
-                    order_p--;
-                i++;
-                continue;
-            }
-            if (str[i] != '0')
-            {
-                if (!flag)
-                    flag = 1;
-            }
-            num->mantissa[m + n] = (int)(str[i] - '0');
-            if (point)
-                n++;
-            else
-                m++;
-        }
-        else
-        {
-            if (str[i] == '-' || str[i] == '+')
-                return SIGN_ERROR;
-            if (str[i] == '.' || str[i] == ',')
-                return POINT_ERROR;
-            else
-                return BAD_FLOAT_ERROR;
-        }
-        i++;
-    }
-
-    if ((i - point - eps - sign) > LEN)
-        return MANTISSA_OVERFLOW_ERROR;
-
-    num->size = m + n;
-
-    if (eps)
-    {
-        if (str[i] == '-' || str[i] == '+')
-        {
-            if (str[i] == '-')
-                sign = 1;
-            i++;
-        }
-        for (; str[i] != '\0'; i++)
-        {
-            if (isdigit(str[i]))
-                order = order * 10 + (int)(str[i] - '0');
-            else
-                if (str[i] == '+' || str[i] == '-')
-                    return SIGN_ERROR;
-                else if (str[i] == 'E' || str[i] == 'e')
-                    return EPS_ERROR;
-                else
-                    return BAD_FLOAT_ERROR;
-        }
-        if (sign)
-            order *= -1;
-    }
-    if (num->size)
-        num->order = order_p + order + m;
     else
-        num->size = 1;
-    if (order >= MAX_ORDER || order <= MIN_ORDER)
-        return ORDER_OVERFLOW_ERROR;
+        return NUM_READ_ERROR;
+    
+    current = getc(stdin);
+    while (isdigit(current))
+    {
+        if (len > MANTISSA_LEN)
+            return NUM_READ_ERROR;
+        num->mantissa[len] = current - '0';
+        len++;
+        current = getc(stdin);
+    }
 
-    return 0;
+    if (!isspace(current))
+        return NUM_READ_ERROR;
+
+    num->mantissa_len = len;
+
+    reverse_mantissa(num->mantissa, num->mantissa_len);
+    big_int_remove_leading_zeroes(num);
+
+    return EXIT_SUCCESS;
 }
 
-int get_int_num(num_t *num)
+int big_float_input(big_float_t *num)
 {
-    char str[STR_LEN];
-    size_t i = 0;
-    int m = 0;
-    int sign = 0;
+    num->is_negative = 0;
+    num->exponent = 0;
 
-    if (fgets(str, STR_LEN + 2, stdin) == NULL)
-        return INT_STR_ERROR;
-    if (str[strlen(str) - 1] == '\n')
-        str[strlen(str) - 1] = '\0';
-    if (strlen(str) > STR_LEN)
-        return STRING_OVERFLOW_ERROR;
-    if (strlen(str) == 0)
-        return INT_STR_ERROR;
-    if (str[i] == '-' || str[i] == '+')
+    size_t len = 0;
+    int num_shift = -1;
+
+    int dot_flag = 0;
+
+    char current = getc(stdin);
+
+    if (current == '-')
+        num->is_negative = 1;
+    else if (current == '+')
+        num->is_negative = 0;
+    else if (isdigit(current) && current != '0')
     {
-        sign = 1;
-        num->sign = str[i];
-        i++;
+        num->mantissa[len] = current - '0';
+        len++; 
     }
-
-    for (; str[i] != '\0'; i++)
+    else if (current == '.')
     {
-        if (isdigit(str[i]))
-            num->mantissa[m++] = (int)(str[i] - '0');
-        else
-            return BAD_INTEGER_ERROR;
-        if ((i - sign) >= LEN)
-            return MANTISSA_OVERFLOW_ERROR;
+        num_shift = 0;
+        dot_flag = 1;
     }
-
-    num->size = m;
+    else if (!isdigit(current))
+        return NUM_READ_ERROR;
     
+    current = getc(stdin);
+    while (isdigit(current) || current == '.')
+    {
+        if (len > MANTISSA_LEN)
+            return NUM_READ_ERROR;
+        if (current == '.' && dot_flag == 1)
+            return NUM_READ_ERROR;
+        else if (current == '.' && dot_flag == 0)
+        {
+            num_shift = (int)len;
+            current = getc(stdin);
+            dot_flag = 1;
+            continue;
+        }
+
+        num->mantissa[len] = current - '0';
+        len++;
+        current = getc(stdin);
+    }
+    if (!isspace(current))
+        return NUM_READ_ERROR;
+
+    num->mantissa_len = len;
+    reverse_mantissa(num->mantissa, num->mantissa_len);
+
+    if (num_shift == -1)
+        num_shift = len;
+
+    if (current == '\n')
+    {
+        if (num_shift != -1)
+            num->exponent += num_shift;
+        return EXIT_SUCCESS;
+    }
+
+    current = getc(stdin);
+    char exp[15];
+    if (current == 'E')
+        {
+            if (fgets(exp, 15, stdin) == NULL || exp[strlen(exp) - 1] != '\n')
+                return NUM_READ_ERROR;
+            exp[strlen(exp) - 1] = '\0';
+            char *trash;
+            num->exponent = strtol(exp, &trash, 10); 
+            if (*trash != '\0')
+                return NUM_READ_ERROR;
+            
+        }
+    else 
+        return NUM_READ_ERROR;
+
+    //if (num->exponent > 99999 || num->exponent < -99999)
+        //return EXPONENT_ERROR;
+    
+    if (num_shift != -1)
+        num->exponent += num_shift;
+
+    big_float_remove_leading_zeroes(num);
+
     return EXIT_SUCCESS;
 }

@@ -3,183 +3,305 @@
 
 #include "operations.h"
 
-void remove_zeroes(num_t *num)
+void reverse_mantissa(char mant[], size_t len)
 {
-    for (int i = num->size - 1; i >= 0 && !num->mantissa[i]; i--)
-        num->size--;
-}
-
-void swap_right(int arr[ARR_LEN], int n)
-{
-    for (int i = n - 1; i >= 0; i--)
-        arr[i + 1] = arr[i];
-    arr[0] = 0;
-}
-
-void rounding(num_t *num, int n)
-{
-    int remainder = 0;
-    int k = n - 1;
-    num->mantissa[k]++;
-    while ((num->mantissa[k] += remainder) > 9)
+    char temp;
+    for (size_t i = 0; i < len / 2; i++)
     {
-        if (k == 0 && num->mantissa[k] > 9)
-        {
-            k = n - 1;
-            swap_right(num->mantissa, n);
-            num->mantissa[0] = num->mantissa[1] / 10;
-            num->mantissa[1] %= 10;
-            num->order++;
-        }
-
-        remainder = num->mantissa[k] / 10;
-        num->mantissa[k] %= 10;
-        k--;
+        temp = mant[len - i - 1];
+        mant[len - i - 1] = mant[i];
+        mant[i] = temp;
     }
-    num->order++;
 }
 
-void multiplication(num_t *num1, num_t *num2, num_t *res)
-{
-    int remainder = 0;
-    int res_m = 0;
 
-    for (int i = num2->size - 1; i >= 0; i--)
+void big_float_remove_leading_zeroes(big_float_t *num)
+{
+    while (num->mantissa_len > 1 && num->mantissa[num->mantissa_len - 1] == 0)
+        num->mantissa_len--;
+    
+    if (num->mantissa_len == 1 && num->mantissa[0] == 0)
+        num->is_negative = 0;
+}
+
+
+void big_int_remove_leading_zeroes(big_int_t *num)
+{
+    while (num->mantissa_len > 1 && num->mantissa[num->mantissa_len - 1] == 0)
+        num->mantissa_len--;
+    
+    if (num->mantissa_len == 1 && num->mantissa[0] == 0)
+        num->is_negative = 0;
+}
+
+void big_float_print(big_float_t num)
+{
+    if (num.mantissa_len == 0 || (num.mantissa_len == 1 && num.mantissa[0] == 0))
     {
-        int flag = 0;
-        remainder = 0;
-
-        for (int j = num1->size - 1; j >= 0; j--)
-        {
-            int x = num2->mantissa[i] * num1->mantissa[j] + remainder;
-
-            if (j == 0 && x > 9)
-            {
-                x += res->mantissa[j];
-            
-                res_m++;
-                swap_right(res->mantissa, num1->size + res_m);
-                res->mantissa[0] = x / 10;
-                res->mantissa[1] = x % 10;
-                if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] >= 5)
-                {
-                    rounding(res, num1->size + res_m - 1);
-                    res_m--;
-                }
-                else if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] < 5)
-                {
-                    res->mantissa[num1->size + res_m - 1] = 0;
-                    res_m--;
-                    res->order++;
-                }
-
-                flag = 1;
-                break;
-            }
-            remainder = (res->mantissa[j] + x) / 10;
-            res->mantissa[j] = (res->mantissa[j] + x) % 10;
-        }
-
-        if (!flag && i && !remainder)
-        {
-            res_m++;
-            swap_right(res->mantissa, num1->size + res_m);
-            if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] >= 5)
-            {
-                rounding(res, num1->size + res_m - 1);
-                res_m--;
-            }
-            else if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] < 5)
-            {
-                res->mantissa[num1->size + res_m - 1] = 0;
-                res_m--;
-                res->order++;
-            }
-        }
-        else if (!flag && remainder)
-        {
-            res_m++;
-            swap_right(res->mantissa, num1->size + res_m);
-            res->mantissa[0] += remainder % 10;
-            if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] >= 5)
-            {
-                rounding(res, num1->size + res_m - 1);
-                res_m--;
-            }
-            else if (num1->size + res_m > 30 && res->mantissa[num1->size + res_m - 1] < 5)
-            {
-                res->mantissa[num1->size + res_m - 1] = 0;
-                res_m--;
-                res->order++;
-            }
-        }
+        printf("+0.0E+0\n");
+        return;   
     }
-    res->size = num1->size + res_m;
+    reverse_mantissa(num.mantissa, num.mantissa_len);
+    if (num.is_negative)
+        printf("-0.");
+    else 
+        printf("+0.");
+
+    for (size_t i = 0; i < num.mantissa_len; i++)
+        printf("%d", num.mantissa[i]);
+    printf("E%+d\n", num.exponent);
+    reverse_mantissa(num.mantissa, num.mantissa_len);
 }
 
-void print_res(num_t *num)
+
+int big_float_equal(big_float_t l, big_float_t r)
 {
-    printf("Результат:\n");
-    printf("||0---------10--------20--------30\n");
-    printf("|||---------|---------|---------|\n");
-    printf("%c0.", num->sign);
-    if (num->size == 0)
-        printf("0");
+    if (l.is_negative != r.is_negative)
+        return 0;
+    if (l.mantissa_len != r.mantissa_len)
+        return 0;
+
+    for (size_t i = 0; i < l.mantissa_len; ++i)
+        if (l.mantissa[i] != r.mantissa[i])
+            return 0;
+
+    return 1;    
+}
+
+
+int big_nums_equal(big_int_t l, big_float_t r)
+{
+    if (l.is_negative != r.is_negative)
+        return 0;
+    if (l.mantissa_len != r.mantissa_len)
+        return 0;
+
+    for (size_t i = 0; i < l.mantissa_len; ++i)
+        if (l.mantissa[i] != r.mantissa[i])
+            return 0;
+
+    return 1;    
+}
+
+
+int big_nums_less(big_float_t l, big_float_t r)
+{
+    if (big_float_equal(l, r))
+        return 0;
+    
+    if (l.is_negative)
+    {
+        if (r.is_negative)
+        {
+            big_float_t a = l;
+            a.is_negative = 0;
+            big_float_t b = r;
+            b.is_negative = 0;
+            return big_nums_less(b, a);
+        }
+        else 
+            return 1;
+    }
+    else if (r.is_negative)
+        return 0;
     else
-        for (size_t i = 0; i < num->size; i++)
-            printf("%hd", num->mantissa[i]);
-    printf("E");
-    if (num->order >= 0)
-        printf("+");
-    printf("%d\n", num->order);
-}
-
-void print_error(int rc)
-{
-    switch (rc)
     {
-    case INT_STR_ERROR:
-        printf("Целое число не было введено\n");
-        break;
-    case FLOAT_STR_ERROR:
-        printf("Вещественное число не было введено\n");
-        break;
-    case STRING_OVERFLOW_ERROR:
-        printf("Переполнение строки\n");
-        break;
-    case EPS_ERROR:
-        printf("Некорректное использование E\n");
-        break;
-    case SIGN_ERROR:
-        printf("Некорректный ввод знака\n");
-        break;
-    case POINT_ERROR:
-        printf("Некорректный ввод точки\n");
-        break;
-    case MANTISSA_OVERFLOW_ERROR:
-        printf("Переполнение мантиссы\n");
-        break;
-    case ORDER_OVERFLOW_ERROR:
-        printf("Порядок по модулю больше 100.000\n");
-        break;
-    case BAD_INTEGER_ERROR:
-        printf("Целое число не соответствует формату\n");
-        break;
-    case BAD_FLOAT_ERROR:
-        printf("Вещественное число не соответствует формату\n");
-        break;
-    default:
-        printf("Неизвестная ошибка\n");
-        break;
+        if (l.mantissa_len < r.mantissa_len)
+            return l.mantissa_len < r.mantissa_len;
+        else
+        {
+            for (int i = l.mantissa_len - 1; i >= 0; --i)
+                if (l.mantissa[i] != r.mantissa[i])
+                    return l.mantissa[i] < r.mantissa[i];
+            return 0;
+        }
     }
 }
 
-void init_num(num_t *num)
-{
-    num->sign = '+';
-    num->size = 0;
-    num->order = 0;
 
-    for (size_t i = 0; i < LEN; i++)
-        num->mantissa[i] = 0;
+void big_float_round(big_float_t *l)
+{
+    if (l->mantissa[0] >= 5)
+    {
+        l->mantissa[1]++;
+        for (size_t j = 1; j < l->mantissa_len - 1; j++)
+        {
+            l->mantissa[j + 1] += l->mantissa[j] / 10; 
+            l->mantissa[j] %= 10;   
+            if (l->mantissa[j + 1] < 10)
+                break;
+        }
+    }
+
+    for (size_t i = 0; i < l->mantissa_len - 1; i++)
+        l->mantissa[i] = l->mantissa[i + 1];
+    l->mantissa_len--;
+}
+
+
+void big_float_strip_zeroes(big_float_t *num)
+{
+    while (!num->mantissa[0])
+    {
+        for (size_t j = 0; j < num->mantissa_len - 1; j++)
+            num->mantissa[j] = num->mantissa[j + 1];
+        num->mantissa_len--;
+    }
+    
+}
+
+
+big_float_t multiply_big_float_num(big_float_t l, char r)
+{
+    big_float_t res = l;
+    res.mantissa_len++;
+    char temp = 0;
+    res.mantissa[res.mantissa_len - 1] = 0;
+    for (size_t i = 0; i < res.mantissa_len; i++)
+    {
+        res.mantissa[i] *= r;
+        res.mantissa[i] += temp;
+        temp = res.mantissa[i] / 10;
+        res.mantissa[i] %= 10;
+    }   
+    if (res.mantissa_len > MANTISSA_LEN)
+        big_float_round(&res);
+    
+    if (res.mantissa[res.mantissa_len - 1] == 0)
+        big_float_remove_leading_zeroes(&res);
+    else
+        res.exponent++;
+    
+    return res;
+}
+
+
+big_float_t big_float_substract(big_float_t l, big_float_t r)
+{
+    int carry = 0;
+    big_float_t res = l;
+    for (size_t i = 0; i < r.mantissa_len || carry != 0; ++i)
+    {
+        res.mantissa[i] -= carry + (i < r.mantissa_len ? r.mantissa[i] : 0);
+        carry = res.mantissa[i] < 0;
+        if (carry != 0)
+            res.mantissa[i] += 10;
+    }
+
+    big_float_remove_leading_zeroes(&res);
+    return res;
+}
+
+
+void big_float_shift_right(big_float_t *num)
+{
+    num->mantissa_len++;
+    for (size_t i = num->mantissa_len - 1; i > 0; --i)
+        num->mantissa[i] = num->mantissa[i - 1];
+    num->mantissa[0] = 0;
+}
+
+void big_int_shift_right(big_int_t *num)
+{
+    num->mantissa_len++;
+    for (size_t i = num->mantissa_len - 1; i > 0; --i)
+        num->mantissa[i] = num->mantissa[i - 1];
+    num->mantissa[0] = 0;
+}
+
+
+int big_nums_divide(big_int_t l, big_float_t r, big_float_t *result)
+{
+    if (big_nums_equal(l, r))
+    {
+        result->mantissa_len = 1;
+        result->mantissa[0] = 1;
+        result->is_negative = l.is_negative ^ r.is_negative;     
+        result->exponent = -r.exponent + r.mantissa_len + result->mantissa_len;
+        if (result->exponent > 99999 || result->exponent < -99999)
+            return EXPONENT_ERROR;
+        return EXIT_SUCCESS;
+    }
+
+    big_float_t b = r;
+    b.is_negative = 0;
+
+    big_int_t l_temp = l;
+    l_temp.is_negative = 0;
+
+    big_float_remove_leading_zeroes(&b);
+    big_int_remove_leading_zeroes(&l);
+
+    if (b.mantissa_len == 0 || (b.mantissa_len == 1 && b.mantissa[0] == 0))
+        return ZERO_DIVISION_ERROR;
+
+    if (l.mantissa_len == 0 || (l.mantissa_len == 1 && l.mantissa[0] == 0))
+    {
+        result->mantissa_len = 1;
+        result->mantissa[0] = 0;
+        result->is_negative = 0;     
+        result->exponent = 0;
+        return EXIT_SUCCESS;
+    }
+
+    size_t num_shift = 0;
+
+    while (l_temp.mantissa_len <= MANTISSA_LEN + 1)
+        {
+            big_int_shift_right(&l_temp);
+            num_shift++;
+        }
+
+    result->mantissa_len = l_temp.mantissa_len;
+    l_temp.is_negative = 0;
+
+    big_float_t current;
+    current.mantissa_len = 1;
+    current.mantissa[0] = 0;
+    current.exponent = 0;
+    current.is_negative = 0;
+
+
+    for (int i = l_temp.mantissa_len - 1; i >= 0; --i)
+    {
+        big_float_shift_right(&current);
+        current.mantissa[0] = l_temp.mantissa[i];
+        big_float_remove_leading_zeroes(&current);
+        int x = 0, l = 0, r = 10;
+        while (l <= r)
+        {
+            int m = (l + r) / 2;
+            big_float_t t = multiply_big_float_num(b, m);
+            if (!big_nums_less(current, t))
+            {
+                x = m;
+                l = m + 1;
+            }
+            else
+                r = m - 1;
+        }
+
+        result->mantissa[i] = x;
+        big_float_t temp = multiply_big_float_num(b, x);
+        current = big_float_substract(current, temp);
+    }
+
+    result->is_negative = l.is_negative ^ r.is_negative;
+    big_float_remove_leading_zeroes(result);
+
+    size_t deleated_nums = result->mantissa_len;
+    big_float_strip_zeroes(result);
+    deleated_nums -= result->mantissa_len;
+
+    result->exponent = -r.exponent + r.mantissa_len + deleated_nums + result->mantissa_len - num_shift;
+    
+    if (current.mantissa[0] != 0 || result->mantissa_len == MANTISSA_LEN + 1)
+        big_float_round(result);
+
+    big_float_strip_zeroes(result);
+    
+    if (result->exponent > 99999 || result->exponent < -99999)
+        return EXPONENT_ERROR;
+
+    return EXIT_SUCCESS;
 }
