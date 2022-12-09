@@ -15,5 +15,6 @@
 
 #define STR_LEN 100
 #define NUM_RUNS 1000
+#define HZ 2300000
 
 #endif // __ERRORS_H__

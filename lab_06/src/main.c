@@ -100,7 +100,11 @@ int main(void)
                 printf("Дерево не было инициализировано\n");
         }
         else if (action == 5)
-            compare_time();
+            compare_time_search();
+        else if (action == 6)
+            compare_time_insert();
+        else if (action == 7)
+            compare_time_delete();
         else if (action == 0)
             break;
     }

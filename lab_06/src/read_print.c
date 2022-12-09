@@ -16,9 +16,9 @@ int read_action(int *action)
         return SCAN_ACTION_ERROR;
     }
 
-    if (*action < 0 || *action > 5)
+    if (*action < 0 || *action > 7)
     {
-        printf("Номер меню - целое число от 0 до 5\n");
+        printf("Номер меню - целое число от 0 до 7\n");
         return VALUE_ACTION_ERROR;
     }
 
@@ -33,6 +33,8 @@ void print_choice(void)
     printf("3. Найти указанное слово\n");
     printf("4. Вывести дерево\n");
     printf("5. Сравнить время поиска в дереве и файле\n");
+    printf("6. Сравнить время добавления в дереве и файле\n");
+    printf("7. Сравнить время удаления в дереве и файле\n");
     printf("0. Выход\n");
     printf("\n");
 }
@@ -68,16 +70,37 @@ int read_line(FILE *f, binary_tree_t *binary_tree)
     return EXIT_SUCCESS;
 }
 
+void apply(branch_t *tree, action_t f, void *arg)
+{
+    if (tree == NULL)
+        return;
+    
+    apply(tree->left, f, arg);
+    f(tree, arg);
+    apply(tree->right, f, arg);
+}
+
+/*
 void apply_pre(branch_t *tree, action_t f, void *arg)
 {
     if (tree == NULL)
         return;
     
-    apply_pre(tree->left, f, arg);
     f(tree, arg);
+    apply_pre(tree->left, f, arg);
     apply_pre(tree->right, f, arg);
 }
 
+void apply_after(branch_t *tree, action_t f, void *arg)
+{
+    if (tree == NULL)
+        return;
+    
+    apply_after(tree->left, f, arg);
+    apply_after(tree->right, f, arg);
+    f(tree, arg);
+}
+*/
 
 void print_tree(FILE *f, branch_t *head)
 {
@@ -91,31 +114,18 @@ void print_tree(FILE *f, branch_t *head)
 void to_dot(void *node, void *param)
 {
     branch_t *node_cur = node;
-
     FILE *out = param;
+
     if (node_cur->left != NULL)
         fprintf(out, "%s -> %s;\n", node_cur->word, node_cur->left->word);
-    else
-    {
-        //fprintf(out, "null%d [shape=point];\n", cnt);
-        //fprintf(out, "%s -> null%d;\n", node_cur->word, cnt++);
-        ;
-    }
-    
     if (node_cur->right != NULL)
         fprintf(out, "%s -> %s;\n", node_cur->word, node_cur->right->word);
-    else
-    {
-        //fprintf(out, "null%d [shape=point];\n", cnt);
-        //fprintf(out, "%s -> null%d;\n", node_cur->word, cnt++);
-        ;
-    }
 }
 
 void export_to_dot(FILE *f, char *tree_name, void *tree)
 {
     fprintf(f, "digraph %s {\n", tree_name);
-    apply_pre(tree, to_dot, f);
+    apply(tree, to_dot, f);
     fprintf(f, "}\n");
     cnt = 0;
 }
