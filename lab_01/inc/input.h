@@ -2,11 +2,9 @@
 #define __INPUT_H__
 
 #include "constants.h"
-#include "errors.h"
-#include "operations.h"
 #include "structs.h"
 
-int big_int_input(big_int_t *num);
-int big_float_input(big_float_t *num);
+int my_float_input(float_t *a);
+int my_integer_input(integer_t *b, int *int_len);
 
 #endif // __INPUT_H__
