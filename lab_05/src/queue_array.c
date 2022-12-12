@@ -215,10 +215,10 @@ void task_arr(void)
             printf("\nЗаявок 1го типа обработано = %d\n", q1_req_out);
 
             printf("Текущая длина очереди 1го типа = %d\n", q1_len_cur);
-            printf("Средняя длина очереди 1го типа = %f\n", (float)(q1_len_all / q1_req_all));
+            printf("Средняя длина очереди 1го типа = %f\n", ((float)q1_len_all / q1_req_all));
 
             printf("Текущая длина очереди 2го типа = %d\n", q2_len_cur);
-            printf("Средняя длина очереди 2го типа = %f\n\n", (float)(q2_len_all / q2_req_all));
+            printf("Средняя длина очереди 2го типа = %f\n\n", ((float)q2_len_all / q2_req_all));
         }
 
     }
@@ -241,7 +241,7 @@ void task_arr(void)
     float percent_oa = fabs((time_all - estimate_model_time) * 100 / estimate_model_time);
 
     printf("\nОбщее время моделировния = %f \
-    \nПогрешность моделирования = %.3f%%\n", time_all, percent_oa);
+    \nПогрешность моделирования = %.2f%%\n", time_all, percent_oa);
 
     printf("\nЗаявок вошло в 1ую очередь = %d \
     \nЗаявок 1ой очереди вышло = %d \
@@ -258,11 +258,11 @@ void task_arr(void)
     float time_in2 = time_all / avg_q2_in;
     float percent_time_in2 = fabs((q2_req_in - time_in2) * 100 / time_in2);
 
-    printf("\nПогрешность ввода заявок в 1ую очередь %.3f%% \
-    \nПогрешность ввода заявок во 2ую очередь %.3f%%\n", percent_time_in1, percent_time_in2);
+    printf("\nПогрешность ввода заявок в 1ую очередь %.2f%% \
+    \nПогрешность ввода заявок во 2ую очередь %.2f%%\n", percent_time_in1, percent_time_in2);
 
     float all_estimate_work = q1_time_all + q2_time_all;
     float time_wait = time_all - all_estimate_work;
 
-    printf("\nВремя простоя = %f\n", fabs(time_wait));
+    printf("\nВремя простоя = %.2f\n", fabs(time_wait));
 }

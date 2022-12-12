@@ -299,10 +299,10 @@ void task_list(void)
             printf("\nЗаявок 1го типа обработано = %d\n", q1_req_out);
 
             printf("Текущая длина очереди 1го типа = %d\n", q1_len_cur);
-            printf("Средняя длина очереди 1го типа = %f\n", (float)(q1_len_all / q1_req_all));
+            printf("Средняя длина очереди 1го типа = %f\n", ((float)q1_len_all / q1_req_all));
 
             printf("Текущая длина очереди 2го типа = %d\n", q2_len_cur);
-            printf("Средняя длина очереди 2го типа = %f\n\n", (float)(q2_len_all / q2_req_all));
+            printf("Средняя длина очереди 2го типа = %f\n\n", ((float)q2_len_all / q2_req_all));
         }
 
     }
@@ -324,7 +324,7 @@ void task_list(void)
 
     float percent_oa = fabs((time_all - estimate_model_time) * 100 / estimate_model_time);
 
-    printf("\nОбщее время моделировния = %f \
+    printf("\nОбщее время моделировния = %.2f \
     \nПогрешность моделирования = %.2f%%\n", time_all, percent_oa);
 
     printf("\nЗаявок вошло в 1ую очередь = %d \
@@ -348,5 +348,5 @@ void task_list(void)
     float all_estimate_work = q1_time_all + q2_time_all;
     float time_wait = time_all - all_estimate_work;
 
-    printf("\nВремя простоя = %f\n", fabs(time_wait));
+    printf("\nВремя простоя = %.2f\n", fabs(time_wait));
 }
