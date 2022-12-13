@@ -4,15 +4,6 @@
 #include "structs.h"
 #include "times.h"
 
-#define T1_IN_B 1
-#define T1_IN_E 5
-#define T2_IN_B 0
-#define T2_IN_E 3
-#define T1_OUT_B 0
-#define T1_OUT_E 4
-#define T2_OUT_B 0
-#define T2_OUT_E 1
-
 #define COUNT 1000
 #define INTERVAL 100
 #define OVERFLOW_ERROR 2

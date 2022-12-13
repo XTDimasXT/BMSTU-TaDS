@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "queue_array.h"
+#include "times.h"
 
 void init_arr_queue(arr_t *queue)
 {

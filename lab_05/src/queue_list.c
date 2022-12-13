@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "queue_list.h"
+#include "times.h"
 
 void init_list_queue(list_t *queue)
 {
