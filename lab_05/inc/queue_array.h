@@ -12,8 +12,8 @@ void init_arr_queue(arr_t *queue);
 void push_arr_queue(arr_t *queue, int elem);
 void pop_arr_queue(arr_t *queue);
 void print_arr_queue(arr_t queue);
-void task_arr(void);
+int task_arr(void);
 int clear_check_arr_queue(arr_t queue);
-int owerflow_arr_queue(arr_t queue);
+int overflow_arr_queue(arr_t queue);
 
 #endif // __QUEUE_ARRAY_H__

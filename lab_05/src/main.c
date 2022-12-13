@@ -43,7 +43,7 @@ int main(void)
         {
             int num = get_random_num();
 
-            if (!owerflow_arr_queue(queue_arr))
+            if (!overflow_arr_queue(queue_arr))
             {
                 push_arr_queue(&queue_arr, num);
             }

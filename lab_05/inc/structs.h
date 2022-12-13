@@ -1,7 +1,7 @@
 #ifndef __STRUCTS_H__
 #define __STRUCTS_H__
 
-#define MAX_ELEMS 1000
+#define MAX_ELEMS 5000
 
 typedef struct arr_s
 { 
