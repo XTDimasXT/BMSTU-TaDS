@@ -17,7 +17,8 @@ void free_list(list_t *queue);
 void add_adress(arr_clear_t *arr, list_t *list);
 void print_arr_adress(arr_clear_t arr);
 void del_adress(arr_clear_t *arr, list_t *list);
-void task_list(void);
+int task_list(void);
 int clear_check_list(list_t queue);
+int overflow_list(list_t queue);
 
 #endif // __QUEUE_LIST_H__

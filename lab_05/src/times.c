@@ -128,12 +128,12 @@ void time_del(int count)
 
 void time_counting(void)
 {
-    puts("\nВведите количество элементов (от 1 до 1000):");
+    printf("\nВведите количество элементов (от 1 до %d): ", MAX_ELEMS);
     int count;
 
     int rc = scanf("%d", &count);
 
-    if ((rc != 1) || (count < 1) || (count > 1000))
+    if ((rc != 1) || (count < 1) || (count > MAX_ELEMS))
     {
         puts("\nОшибка: неверно введено количество элементов\n\n");
         return;

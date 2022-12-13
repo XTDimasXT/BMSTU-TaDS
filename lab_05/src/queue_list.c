@@ -24,9 +24,9 @@ int clear_check_list(list_t queue)
     return queue.size == 0 ? 1 : 0;
 }
 
-int owerflow_list(list_t queue)
+int overflow_list(list_t queue)
 {
-    return queue.size > 1000 ? 1 : 0;
+    return queue.size > MAX_ELEMS ? 0 : 1;
 }
 
 void push_list_queue(list_t *queue, int elem)
@@ -162,7 +162,7 @@ float min_of_three_list(float a, float b, float c)
     return min;
 }
 
-void task_list(void)
+int task_list(void)
 {
     list_t queue1;
     init_list_queue(&queue1);
@@ -199,6 +199,12 @@ void task_list(void)
 
     while (q1_req_out < 1000)
     {
+        if (overflow_list(queue2) == 0 || overflow_list(queue1) == 0)
+        {
+            printf("Произошло переполнение одной из очередей\n");
+            return OVERFLOW_ERROR;
+        }
+
         if (q1_cur_time_in == 0)
             q1_cur_time_in = rand_time(T1_IN_B, T1_IN_E);
 
@@ -350,4 +356,6 @@ void task_list(void)
     float time_wait = time_all - all_estimate_work;
 
     printf("\nВремя простоя = %.2f\n", fabs(time_wait));
+
+    return EXIT_SUCCESS;
 }
