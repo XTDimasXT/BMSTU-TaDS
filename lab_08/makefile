@@ -8,7 +8,7 @@ OBJS_DIR := ./out
 $(shell mkdir -p $(OBJS_DIR))
 OBJS := $(OBJS_DIR)/graph.o $(OBJS_DIR)/list.o
 
-CFLAGS := -I$(HDRS_DIR) -std=c99 -Wall -Werror -Wpedantic -Wextra
+CFLAGS := -I$(HDRS_DIR) -std=c99 -Wall -Wpedantic -Wextra
 
 .PHONY = release clean
 

@@ -226,6 +226,8 @@ int list_graph_read(FILE *f, list_graph_t *graph)
             return GRAPH_READ_ERROR;
         }
     }
+    char *tmp;
+    scanf("%s", tmp);
 
     return EXIT_SUCCESS;
 }
